@@ -10,6 +10,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+//Available routes
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/event', require('./routes/note'))
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
