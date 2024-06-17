@@ -21,7 +21,7 @@ const UserSchema = new Schema({
     },
     displayPicture: {
         type: String,
-        default: 'defaultImagePath.jpg' // path to default image
+        default: 'defaultImageURL' // path to default image
     },
     eventsHosting: [{
         type: Schema.Types.ObjectId,
@@ -33,4 +33,6 @@ const UserSchema = new Schema({
     }]
 });
 
-export default mongoose.model('User', UserSchema); // model name - User, schema - UserSchema
+const User = mongoose.model('user', UserSchema); // model name - user, schema - UserSchema
+
+export default User

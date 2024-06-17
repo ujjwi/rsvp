@@ -1,19 +1,23 @@
 import express from 'express';
 import connectToMongo from './config/db.js';
+import authRoutes from './routes/auth.js';
+import eventRoutes from './routes/event.js';
 
 connectToMongo();
 
 const app = express()
-const port = 3000
+const port = 5000
+
+app.use(express.json()) // to access req.body
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 //Available routes
-app.use('/api/auth', require('./routes/auth'))
-app.use('/api/event', require('./routes/note'))
+app.use('/api/auth', authRoutes);
+app.use('/api/event', eventRoutes);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`listening on port ${port}`)
 })
