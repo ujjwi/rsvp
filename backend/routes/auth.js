@@ -4,6 +4,11 @@ import User from '../models/User.js'
 import {body, validationResult} from 'express-validator'
 import multer from 'multer'; // to recieve a file(image) through form
 import { v4 as uuidv4 } from 'uuid'; // for generating unique filenames
+import bcrypt from 'bcryptjs'; // for salting passwords and creating hash from them
+import jwt from 'jsonwebtoken'; // for saving user-session
+import 'dotenv/config';
+
+const jwt_secret = process.env.secret_key;
 
 const storage = multer.diskStorage({
     // these functions will be executed whenever a new file is recieved
@@ -51,14 +56,28 @@ router.post('/createuser', upload.single('displayPicture'), [
         if(user) {
             return res.status(400).json({error : "A user with this email already exists"});
         }
+
+        const salt = await bcrypt.genSalt(10);
+        const secPass = await bcrypt.hash(req.body.password, salt);
+
         // adding user to the database
         user = await User.create({
             name : req.body.name,
-            password : req.body.password,
+            password : secPass,
             email : req.body.email,
             displayPicture: req.file.path // save the path of the uploaded file
         })
-        res.json(user);
+
+        const data = {
+            user : {
+                id : user.id // sending user id as the promise to verify the user access to data
+            }
+        }
+        const authToken = jwt.sign(data, jwt_secret);
+        // console.log(authToken);
+        res.json({authToken : authToken});
+
+        // res.json(user);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");
