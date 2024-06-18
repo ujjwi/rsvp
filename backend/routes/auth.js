@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid'; // for generating unique filenames
 import bcrypt from 'bcryptjs'; // for salting passwords and creating hash from them
 import jwt from 'jsonwebtoken'; // for saving user-session
 import 'dotenv/config';
+import fetchUser from '../middlewares/fetchUser.js' // using the fetchUser middleware
 
 const jwt_secret = process.env.secret_key;
 
@@ -39,12 +40,12 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-//creating a User using : POST "/api/auth/createuser" - No login required 
+// Route 1 : creating a User using : POST "/api/auth/createuser" - No login required 
 router.post('/createuser', upload.single('displayPicture'), [
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password must have atleast 5 characters').isLength({min:5})
 ], async (req, res) => {
-    // if there are errors, return the errors
+    // if there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors : errors.array()});
@@ -80,7 +81,57 @@ router.post('/createuser', upload.single('displayPicture'), [
         // res.json(user);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("some error occured");
+        res.status(500).send("Server error!");
+    }
+})
+
+// Route 2 :Authenticating a User using : POST "/api/auth/login" - No login required 
+router.post('/login', [
+    body('email', 'Enter a valid email').isEmail(),
+    body('password', 'Password cannot be blank').exists()
+], async (req, res) => {
+    // if there are errors, return the errors and status `Bad request`
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors : errors.array()});
+    }
+
+    const {email, password} = req.body;
+    try {
+        let user = await User.findOne({email});
+        if(!user) {
+            return res.status(400).json({errors : 'Try logging in with correct credentials'});
+        }
+
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if(!passwordCompare) {
+            return res.status(400).json({errors : 'Try logging in with correct credentials'});
+        }
+
+        // If the verification is successfull,
+        // We'll repeat the process we did just after an account was created
+        const data = {
+            user : {
+                id : user.id // sending user id as the promise to verify the user access to data
+            }
+        }
+        const authToken = jwt.sign(data, jwt_secret);
+        res.json({authToken : authToken});
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+})
+
+// Route 3 : Getting logged In User details using : POST "/api/auth/getuser" - login required 
+router.post('/getuser', fetchUser, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId).select("-password");
+        res.send(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
     }
 })
 
