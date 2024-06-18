@@ -6,11 +6,11 @@ const EventSchema = new Schema({
         type: String,
         required: true
     },
-    type: {
-        type: String,
-        default: "general"
+    startdatetime: {
+        type: Date,
+        required: true
     },
-    datetime: {
+    enddatetime: {
         type: Date,
         required: true
     },
