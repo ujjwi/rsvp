@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router()
 import User from '../models/User.js'
+import Event from '../models/Event.js'
 import {body, validationResult} from 'express-validator'
 import multer from 'multer'; // to recieve a file(image) through form
 import { v4 as uuidv4 } from 'uuid'; // for generating unique filenames
@@ -43,7 +44,8 @@ const upload = multer({
 // Route 1 : creating a User using : POST "/api/auth/createuser" - No login required 
 router.post('/createuser', upload.single('displayPicture'), [
     body('email', 'Enter a valid email').isEmail(),
-    body('password', 'Password must have atleast 5 characters').isLength({min:5})
+    body('password', 'Password must have atleast 5 characters').isLength({min:5}),
+    body('name', 'Name must not be empty').optional().isLength({ min: 1 })
 ], async (req, res) => {
     // if there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
@@ -134,5 +136,106 @@ router.get('/getuser', fetchUser, async (req, res) => {
         res.status(500).send("Server error!");
     }
 })
+
+// Route 4: Update user details using : PUT "/api/auth/updateuser" - login required 
+router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
+    body('email', 'Enter a valid email').optional().isEmail(),
+    body('password', 'Password must have at least 5 characters').optional().isLength({ min: 5 }),
+    body('name', 'Name must not be empty').optional().isLength({ min: 1 })
+], async (req, res) => {
+    // If there are errors, return the errors and status `Bad request`
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const userId = req.user.id;
+        const { email, password, name } = req.body;
+        const userUpdates = {};
+
+        // Check if email is being updated
+        if (email) {
+            let existingUser = await User.findOne({ email });
+            if (existingUser && existingUser._id.toString() !== userId) {
+                return res.status(400).json({ error: 'A user with this email already exists' });
+            }
+            userUpdates.email = email;
+        }
+
+        // Check if password is being updated
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const secPass = await bcrypt.hash(password, salt);
+            userUpdates.password = secPass;
+        }
+
+        // Check if name is being updated
+        if (name) {
+            userUpdates.name = name;
+        }
+
+        // Check if display picture is being updated
+        if (req.file) {
+            userUpdates.displayPicture = req.file.path;
+        }
+
+        // Update the user details
+        let user = await User.findByIdAndUpdate(userId, { $set: userUpdates }, { new: true }).select("-password");
+        res.json(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
+// Route 5: Delete user account using: DELETE "/api/auth/deleteuser" - login required
+router.delete('/deleteuser', fetchUser, [
+    body('password', 'Password is required').exists()
+], async (req, res) => {
+    // If there are errors, return the errors and status `Bad request`
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const userId = req.user.id;
+        const { password } = req.body;
+
+        // Find the user by ID
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Compare the provided password with the stored password
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare) {
+            return res.status(400).json({ error: 'Incorrect password' });
+        }
+
+        // Remove user from any events they are attending
+        await Event.updateMany(
+            { attendees: userId },
+            { $pull: { attendees: userId } }
+        );
+
+        // Remove user from any events they are hosting
+        await Event.updateMany(
+            { createdBy: userId },
+            { $unset: { createdBy: "" } }
+        );
+
+        // Delete the user
+        await User.findByIdAndDelete(userId);
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
 
 export default router
