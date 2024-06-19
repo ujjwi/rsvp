@@ -7,29 +7,35 @@ import {body, validationResult} from 'express-validator'
 import mongoose from 'mongoose';
 
 
-// Route 1 : Get all the events that user has marked to visit : GET "/api/auth/eventsvisiting" - login required 
+// Route 1 : Get all the events that user has marked to visit : GET "/api/event/eventsvisiting" - login required 
 router.get('/eventsvisiting', fetchUser, async (req, res) => {
     try {
-        const eventsVisiting = await Event.find({ attendees: req.user.id });
-        res.json(eventsVisiting);
+        const user = await User.findById(req.user.id).populate('eventsAttending');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user.eventsAttending);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");
     }
-})
+});
 
-// Route 2 : Get all the events that user is hosting : GET "/api/auth/eventsvisiting" - login required 
+// Route 2 : Get all the events that user is hosting : GET "/api/event/eventsvisiting" - login required 
 router.get('/eventshosting', fetchUser, async (req, res) => {
     try {
-        const eventsHosting = await Event.find({createdBy : req.user.id});
-        res.json(eventsHosting);
+        const user = await User.findById(req.user.id).populate('eventsHosting');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user.eventsHosting);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");
     }
-})
+});
 
-// Route 3: Get all the events: GET "/api/auth/getallevents" - login not required
+// Route 3: Get all the events: GET "/api/event/getallevents" - login not required
 router.get('/getallevents', async (req, res) => {
     try {
         const allEvents = await Event.find();
@@ -40,7 +46,7 @@ router.get('/getallevents', async (req, res) => {
     }
 });
 
-// Route 4: Get event by id : GET "/api/auth/getallevents/:id" - login not required
+// Route 4: Get event by id : GET "/api/event/getallevents/:id" - login not required
 router.get('/getallevents/:id', async (req, res) => {
     try {
         const isValidObjectId = mongoose.Types.ObjectId.isValid(req.params.id);
@@ -62,7 +68,7 @@ router.get('/getallevents/:id', async (req, res) => {
 });
 
 
-// Route 5: Add a new event using: POST "/api/auth/addevent" - login required 
+// Route 5: Add a new event using: POST "/api/event/addevent" - login required 
 router.post('/addevent', fetchUser, [
     body('title', 'Title must not be empty').isLength({ min: 1 }),
     body('description', 'Description must have at least 2 characters').isLength({ min: 2 }),
@@ -112,7 +118,7 @@ router.post('/addevent', fetchUser, [
     }
 });
 
-// Route 6: Add an event to eventsAttending list using the Attending button - login required 
+// Route 6: Add an event to eventsAttending list using: POST "/api/event/attendevent/:id"  - login required 
 router.post('/attendevent/:id', fetchUser, async (req, res) => {
     try {
         const isValidObjectId = mongoose.Types.ObjectId.isValid(req.params.id);
@@ -147,6 +153,56 @@ router.post('/attendevent/:id', fetchUser, async (req, res) => {
         await user.save();
 
         res.json({ event, user });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
+// Route 7 : Update an existing event using : PUT "/api/event/updateevent/:id" - login required 
+router.put('/updateevent/:id', fetchUser, [
+    body('title', 'Title must not be empty').optional().isLength({ min: 1 }),
+    body('description', 'Description must have at least 2 characters').optional().isLength({ min: 2 }),
+    body('startdatetime', 'Invalid start date and time').optional().isISO8601(),
+    body('enddatetime', 'Invalid end date and time').optional().isISO8601(),
+    body('location', 'Location must not be empty').optional().isLength({ min: 1 })
+], async (req, res) => {
+    try {
+        const { title, startdatetime, enddatetime, location, description } = req.body;
+
+        // If there are errors, return the errors and status `Bad request`
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        // Ensure the enddatetime is after the startdatetime if both are provided
+        if (startdatetime && enddatetime && new Date(startdatetime) >= new Date(enddatetime)) {
+            return res.status(400).json({ errors: [{ msg: 'End date and time must be after start date and time' }] });
+        }
+
+        // Find the event to be updated
+        let event = await Event.findById(req.params.id);
+        if (!event) {
+            return res.status(404).send("Event not found");
+        }
+
+        // Authorization check
+        if (event.createdBy.toString() !== req.user.id) {
+            return res.status(401).send("Unauthorized action");
+        }
+
+        // Create a new event object with only the fields that need to be updated
+        const newEvent = {};
+        if (title) newEvent.title = title;
+        if (startdatetime) newEvent.startdatetime = startdatetime;
+        if (enddatetime) newEvent.enddatetime = enddatetime;
+        if (location) newEvent.location = location;
+        if (description) newEvent.description = description;
+
+        // Update the event
+        event = await Event.findByIdAndUpdate(req.params.id, { $set: newEvent }, { new: true });
+        res.json({ event });
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");
