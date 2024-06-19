@@ -209,4 +209,87 @@ router.put('/updateevent/:id', fetchUser, [
     }
 });
 
+// Route 8 : Delete an existing event using : DELETE "/api/event/deleteevent/:id" - login required 
+router.delete('/deleteevent/:id', fetchUser, async (req, res) => {
+    try {
+        const isValidObjectId = mongoose.Types.ObjectId.isValid(req.params.id);
+
+        if (!isValidObjectId) {
+            return res.status(400).json({ msg: 'Invalid event ID' });
+        }
+
+        // Find the event to be deleted
+        let event = await Event.findById(req.params.id);
+        if (!event) {
+            return res.status(404).send("Event not found");
+        }
+
+        // Authorization check
+        if (event.createdBy.toString() !== req.user.id) {
+            return res.status(401).send("Unauthorized action");
+        }
+
+        // Delete the event
+        await Event.findByIdAndDelete(req.params.id);
+
+        // Remove the event from the user's eventsHosting array
+        await User.updateOne(
+            { _id: req.user.id },
+            { $pull: { eventsHosting: req.params.id } }
+        );
+
+        // Remove the event from the eventsAttending list of all users who had marked this event to attend
+        await User.updateMany(
+            { eventsAttending: req.params.id },
+            { $pull: { eventsAttending: req.params.id } }
+        );
+
+        res.json({ success: "Event deleted", event: event });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
+// Remove an event from the user's eventsAttending list : DELETE "/api/event/unattendevent/:id" - login required
+router.delete('/unattendevent/:id', fetchUser, async (req, res) => {
+    try {
+        const isValidObjectId = mongoose.Types.ObjectId.isValid(req.params.id);
+
+        if (!isValidObjectId) {
+            return res.status(400).json({ msg: 'Invalid event ID' });
+        }
+
+        const event = await Event.findById(req.params.id);
+        if (!event) {
+            return res.status(404).json({ msg: 'Event not found' });
+        }
+
+        // Check if the user is attending the event
+        if (!event.attendees.includes(req.user.id)) {
+            return res.status(400).json({ msg: 'User is not attending this event' });
+        }
+
+        // Remove the user from the event's attendees list
+        event.attendees.pull(req.user.id);
+        await event.save();
+
+        // Remove the event from the user's eventsAttending list
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            // Rollback the event update if user not found
+            event.attendees.push(req.user.id);
+            await event.save();
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        user.eventsAttending.pull(event._id);
+        await user.save();
+
+        res.json({ event, user });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
 export default router
