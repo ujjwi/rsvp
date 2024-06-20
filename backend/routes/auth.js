@@ -47,17 +47,19 @@ router.post('/createuser', upload.single('displayPicture'), [
     body('password', 'Password must have atleast 5 characters').isLength({min:5}),
     body('name', 'Name must not be empty').optional().isLength({ min: 1 })
 ], async (req, res) => {
+    let success = false;
+
     // if there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(400).json({errors : errors.array()});
+        return res.status(400).json({success, errors : errors.array()});
     }
 
     //checking whether the email already exists
     try {
         let user = await User.findOne({email : req.body.email}); //using await because it is a promise so we have to wait for it to be resolved
         if(user) {
-            return res.status(400).json({error : "A user with this email already exists"});
+            return res.status(400).json({success, error : "A user with this email already exists"});
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -78,7 +80,8 @@ router.post('/createuser', upload.single('displayPicture'), [
         }
         const authToken = jwt.sign(data, jwt_secret);
         // console.log(authToken);
-        res.json({authToken : authToken});
+        success=true;
+        res.json({success, authToken : authToken});
 
         // res.json(user);
     } catch (error) {
@@ -92,22 +95,24 @@ router.post('/login', [
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password cannot be blank').exists()
 ], async (req, res) => {
+    let success = false;
+
     // if there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(400).json({errors : errors.array()});
+        return res.status(400).json({success, errors : errors.array()});
     }
 
     const {email, password} = req.body;
     try {
         let user = await User.findOne({email});
         if(!user) {
-            return res.status(400).json({errors : 'Try logging in with correct credentials'});
+            return res.status(400).json({success, errors : 'Try logging in with correct credentials'});
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password);
         if(!passwordCompare) {
-            return res.status(400).json({errors : 'Try logging in with correct credentials'});
+            return res.status(400).json({success, errors : 'Try logging in with correct credentials'});
         }
 
         // If the verification is successfull,
@@ -118,7 +123,9 @@ router.post('/login', [
             }
         }
         const authToken = jwt.sign(data, jwt_secret);
-        res.json({authToken : authToken});
+
+        success=true;
+        res.json({success, authToken : authToken});
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");
@@ -143,10 +150,12 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
     body('password', 'Password must have at least 5 characters').optional().isLength({ min: 5 }),
     body('name', 'Name must not be empty').optional().isLength({ min: 1 })
 ], async (req, res) => {
+    let success=false;
+
     // If there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array()});
     }
 
     try {
@@ -158,7 +167,7 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
         if (email) {
             let existingUser = await User.findOne({ email });
             if (existingUser && existingUser._id.toString() !== userId) {
-                return res.status(400).json({ error: 'A user with this email already exists' });
+                return res.status(400).json({success, error: 'A user with this email already exists'});
             }
             userUpdates.email = email;
         }
@@ -182,7 +191,7 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
 
         // Update the user details
         let user = await User.findByIdAndUpdate(userId, { $set: userUpdates }, { new: true }).select("-password");
-        res.json(user);
+        res.json(success, user);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");
@@ -193,10 +202,12 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
 router.delete('/deleteuser', fetchUser, [
     body('password', 'Password is required').exists()
 ], async (req, res) => {
+    let success=false;
+
     // If there are errors, return the errors and status `Bad request`
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
 
     try {
@@ -206,13 +217,13 @@ router.delete('/deleteuser', fetchUser, [
         // Find the user by ID
         let user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ success, error: 'User not found' });
         }
 
         // Compare the provided password with the stored password
         const passwordCompare = await bcrypt.compare(password, user.password);
         if (!passwordCompare) {
-            return res.status(400).json({ error: 'Incorrect password' });
+            return res.status(400).json({ success, error: 'Incorrect password' });
         }
 
         // Remove user from any events they are attending
@@ -230,7 +241,8 @@ router.delete('/deleteuser', fetchUser, [
         // Delete the user
         await User.findByIdAndDelete(userId);
 
-        res.json({ message: 'Account deleted successfully' });
+        success=true;
+        res.json({ success, message: 'Account deleted successfully' });
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");

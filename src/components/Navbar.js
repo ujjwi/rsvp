@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext';
+// import { FaUserCircle } from 'react-icons/fa';
 
 function Navbar() {
   let location = useLocation();
 
   let navigate = useNavigate();
 
+  const { isLoggedIn, logout } = useContext(AuthContext);
+
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logout();
     navigate("/login");
   }
 
@@ -28,10 +32,17 @@ function Navbar() {
                 <Link className={`nav-link ${location.pathname==="/about" ? "active" : ""}`} to="/about">About</Link>
               </li>
             </ul>
-            {!localStorage.getItem('token') ? <form className="d-flex" role="search">
-              <Link className="btn btn-light mx-2" to="/login" role="button">Login</Link>
-              <Link className="btn btn-outline-light mx-2" to="/signup" role="button">SignUp</Link>
-            </form> : <button type="button" class="btn btn-light" onClick={handleLogout}>Logout</button>}
+            {!isLoggedIn ? 
+              <form className="d-flex" role="search">
+                <Link className="btn btn-light mx-2" to="/login" role="button">Login</Link>
+                <Link className="btn btn-outline-light mx-2" to="/signup" role="button">SignUp</Link>
+              </form> 
+              : 
+              <div className="d-flex align-items-center">
+                {/* <FaUserCircle size={24} className="text-light mx-2" /> */}
+                <button type="button" className="btn btn-light" onClick={handleLogout}>Logout</button>
+              </div>
+            }
           </div>
         </div>
       </nav>

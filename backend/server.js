@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import connectToMongo from './config/db.js';
 import authRoutes from './routes/auth.js';
 import eventRoutes from './routes/event.js';
@@ -7,6 +8,9 @@ connectToMongo();
 
 const app = express()
 const port = 5000
+
+// Use the cors middleware
+app.use(cors());
 
 app.use(express.json()) // to access req.body
 

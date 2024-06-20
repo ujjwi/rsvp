@@ -6,6 +6,7 @@ import About from './components/About';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
+import AuthProvider from './context/AuthContext';
 
 import {
   BrowserRouter as Router,
@@ -15,22 +16,22 @@ import {
 
 function App() {
   return (
-    <div className="App">
-      <>
-      <Router>
-        <Navbar />
+    <>
+      <AuthProvider>
+        <Router>
+          <Navbar />
 
-        {/* Using "exact path" instead of "path" becuase react does partial checking */}
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/about" element={<About />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/signup" element={<Signup />} />
-          <Route exact path="/profile" element={<Profile />} />
-        </Routes>
-      </Router>
-      </>
-    </div>
+          {/* Using "exact path" instead of "path" becuase react does partial checking */}
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/about" element={<About />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/signup" element={<Signup />} />
+            <Route exact path="/profile" element={<Profile />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </>
   );
 }
 
