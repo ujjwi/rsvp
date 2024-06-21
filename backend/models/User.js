@@ -21,7 +21,7 @@ const UserSchema = new Schema({
     },
     displayPicture: {
         type: String,
-        default: 'defaultImageURL' // path to default image
+        default: "uploads/Default_pfp.jpg" // path to default image
     },
     eventsHosting: [{
         type: Schema.Types.ObjectId,
