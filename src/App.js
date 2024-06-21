@@ -14,6 +14,7 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+import Event from './components/Event';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/event" element={<Event id={'667571668fd60b21e8553e9e'} />} />
             </Routes>
           </Router>
         </EventState>

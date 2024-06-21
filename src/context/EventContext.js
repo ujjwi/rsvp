@@ -135,6 +135,7 @@ const EventState = ({ children }) => {
             },
         });
 
+        // eslint-disable-next-line
         const resp = await response.json();
         setAttendingEvents(attendingEvents.filter(event => event._id !== id));
     }

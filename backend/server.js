@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json()) // to access req.body
 
 // to make the uploads folder publicly accessible, do the following or implement a get request in routes
-// app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
