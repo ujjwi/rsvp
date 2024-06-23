@@ -31,7 +31,7 @@ function App() {
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/profile" element={<Profile />} />
-              <Route exact path="/event" element={<Event id={'667571668fd60b21e8553e9e'} />} />
+              <Route exact path="/event" element={<Event id={'6676796880c938d4b835c5b2'} />} />
             </Routes>
           </Router>
         </EventState>

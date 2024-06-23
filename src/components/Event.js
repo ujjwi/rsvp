@@ -1,28 +1,11 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { EventContext } from '../context/EventContext';
-// import { useParams } from 'react-router-dom';
 
-const Event = (props) => {
-    // const { id } = useParams();
-    const id = props.id;
-
+const Event = ({ event }) => {
     const host = "http://localhost:5000";
-
     const [creator, setCreator] = useState(null);
-
-    const { event, getEventById, attendEvent, unattendEvent, attendingEvents } = useContext(EventContext);
+    const { attendEvent, unattendEvent, attendingEvents } = useContext(EventContext);
     const [isAttending, setIsAttending] = useState(false);
-
-    useEffect(() => {
-        getEventById(id);
-    }, [id, getEventById]);
-
-    useEffect(() => {
-        if (event) {
-            setIsAttending(attendingEvents.some(e => e._id === event._id));
-            fetchCreator(event.createdBy);
-        }
-    }, [event, attendingEvents]);
 
     const fetchCreator = useCallback(async (creatorID) => {
         try {
@@ -39,6 +22,13 @@ const Event = (props) => {
             console.error("Failed to fetch creator data", error);
         }
     }, [host]);
+
+    useEffect(() => {
+        if (event) {
+            setIsAttending(attendingEvents.some(e => e._id === event._id));
+            fetchCreator(event.createdBy);
+        }
+    }, [event, attendingEvents, fetchCreator]);
 
     const handleAttend = () => {
         attendEvent(event._id);
@@ -72,8 +62,8 @@ const Event = (props) => {
                 </div>
             </div>
             <div className="event-footer">
-                <button onClick={isAttending ? handleUnattend : handleAttend}>
-                    {isAttending ? 'Not attending' : 'Attending'}
+                <button type="button" className="btn btn-dark" onClick={isAttending ? handleUnattend : handleAttend}>
+                    {isAttending ? 'Unattend' : 'Attend'}
                 </button>
             </div>
         </div>
