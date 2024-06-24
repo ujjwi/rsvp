@@ -6,13 +6,21 @@ const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
   const login = (token) => {
-    localStorage.setItem('token', token);
-    setIsLoggedIn(true);
+    try {
+      localStorage.setItem('token', token);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
+    try {
+      localStorage.removeItem('token');
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (

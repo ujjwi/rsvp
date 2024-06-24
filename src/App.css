@@ -1,10 +1,26 @@
 .event-container {
-  border: 1px solid #ccc;
+  color: #333;
+  padding: 20px;
+  border: 0px solid #ccc;
   border-radius: 10px;
   padding: 20px;
   margin: 20px;
   background-color: #fff;
   width: 350px;
+}
+
+.gradient-background {
+  background: linear-gradient(to bottom, #ff9a9e, #cca550);
+  /* Fallback for older browsers */
+  background: -webkit-linear-gradient(to bottom, #ff9a9e, #deaa57);
+  background: -moz-linear-gradient(to bottom, #ff9a9e, #e6ae4e);
+}
+
+.gradient-background2 {
+  background: linear-gradient(to bottom, #113aef, #f251f2);
+  /* Fallback for older browsers */
+  /* background: -webkit-linear-gradient(to bottom, #ff9a9e, #deaa57);
+  background: -moz-linear-gradient(to bottom, #ff9a9e, #e6ae4e); */
 }
 
 .event-header {

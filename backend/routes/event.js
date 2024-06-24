@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 // Route 1 : Get all the events that user has marked to visit : GET "/api/event/eventsvisiting" - login required 
 router.get('/eventsvisiting', fetchUser, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('eventsAttending');
+        const user = await User.findById(req.user._id).populate('eventsAttending');
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -24,7 +24,7 @@ router.get('/eventsvisiting', fetchUser, async (req, res) => {
 // Route 2 : Get all the events that user is hosting : GET "/api/event/eventsvisiting" - login required 
 router.get('/eventshosting', fetchUser, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('eventsHosting');
+        const user = await User.findById(req.user._id).populate('eventsHosting');
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -38,7 +38,9 @@ router.get('/eventshosting', fetchUser, async (req, res) => {
 // Route 3: Get all the events: GET "/api/event/getallevents" - login not required
 router.get('/getallevents', async (req, res) => {
     try {
-        const allEvents = await Event.find();
+        const currentTime = new Date();
+        // Find all events that have not finished, and sort them by start time in ascending order
+        const allEvents = await Event.find({ enddatetime: { $gt: currentTime } }).sort({ startdatetime: 1 });
         res.json(allEvents);
     } catch (error) {
         console.error(error.message);
@@ -96,13 +98,13 @@ router.post('/addevent', fetchUser, [
             enddatetime,
             location,
             description,
-            createdBy: req.user.id
+            createdBy: req.user._id
         });
 
         const savedEvent = await event.save();
 
         // Update the user's eventsHosting array
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id);
         if (!user) {
             // Rollback the event creation if user not found
             await Event.findByIdAndDelete(savedEvent._id);
@@ -133,19 +135,19 @@ router.post('/attendevent/:id', fetchUser, async (req, res) => {
         }
 
         // Check if the user is already attending the event
-        if (event.attendees.includes(req.user.id)) {
+        if (event.attendees.includes(req.user._id)) {
             return res.status(400).json({ msg: 'User is already attending this event' });
         }
 
         // Add the user to the event's attendees list
-        event.attendees.push(req.user.id);
+        event.attendees.push(req.user._id);
         await event.save();
 
         // Add the event to the user's eventsAttending list
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id);
         if (!user) {
             // Rollback the event update if user not found
-            event.attendees.pull(req.user.id);
+            event.attendees.pull(req.user._id);
             await event.save();
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -188,7 +190,7 @@ router.put('/updateevent/:id', fetchUser, [
         }
 
         // Authorization check
-        if (event.createdBy.toString() !== req.user.id) {
+        if (event.createdBy.toString() !== req.user._id) {
             return res.status(401).send("Unauthorized action");
         }
 
@@ -225,7 +227,7 @@ router.delete('/deleteevent/:id', fetchUser, async (req, res) => {
         }
 
         // Authorization check
-        if (event.createdBy.toString() !== req.user.id) {
+        if (event.createdBy.toString() !== req.user._id) {
             return res.status(401).send("Unauthorized action");
         }
 
@@ -234,7 +236,7 @@ router.delete('/deleteevent/:id', fetchUser, async (req, res) => {
 
         // Remove the event from the user's eventsHosting array
         await User.updateOne(
-            { _id: req.user.id },
+            { _id: req.user._id },
             { $pull: { eventsHosting: req.params.id } }
         );
 
@@ -266,19 +268,19 @@ router.delete('/unattendevent/:id', fetchUser, async (req, res) => {
         }
 
         // Check if the user is attending the event
-        if (!event.attendees.includes(req.user.id)) {
+        if (!event.attendees.includes(req.user._id)) {
             return res.status(400).json({ msg: 'User is not attending this event' });
         }
 
         // Remove the user from the event's attendees list
-        event.attendees.pull(req.user.id);
+        event.attendees.pull(req.user._id);
         await event.save();
 
         // Remove the event from the user's eventsAttending list
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id);
         if (!user) {
             // Rollback the event update if user not found
-            event.attendees.push(req.user.id);
+            event.attendees.push(req.user._id);
             await event.save();
             return res.status(404).json({ msg: 'User not found' });
         }

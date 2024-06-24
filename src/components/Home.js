@@ -10,11 +10,16 @@ function Home() {
   }, []);
 
   return (
-    <div>
-      <h1>Homepage</h1>
-      {events && events.map(event => (
-        <Event key={event._id} event={event} />
-      ))}
+    <div style={{ backgroundColor: 'black' , marginTop:"50px"}}>
+      <div className="container">
+        <div className="row">
+          {events && events.map(event => (
+            <div className="col-md-4 my-5" key={event._id}>
+              <Event event={event} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

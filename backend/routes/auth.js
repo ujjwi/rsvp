@@ -76,7 +76,7 @@ router.post('/createuser', upload.single('displayPicture'), [
 
         const data = {
             user: {
-                id: user.id // sending user id as the promise to verify the user access to data
+                _id: user._id // sending user id as the promise to verify the user access to data
             }
         }
         const authToken = jwt.sign(data, jwt_secret);
@@ -120,7 +120,7 @@ router.post('/login', [
         // We'll repeat the process we did just after an account was created
         const data = {
             user: {
-                id: user.id // sending user id as the promise to verify the user access to data
+                _id: user._id // sending user id as the promise to verify the user access to data
             }
         }
         const authToken = jwt.sign(data, jwt_secret);
@@ -160,7 +160,7 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
     }
 
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { email, password, name } = req.body;
         const userUpdates = {};
 
@@ -221,7 +221,7 @@ router.delete('/deleteuser', fetchUser, [
     }
 
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { password } = req.body;
 
         // Find the user by ID
