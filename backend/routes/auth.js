@@ -82,7 +82,7 @@ router.post('/createuser', upload.single('displayPicture'), [
         const authToken = jwt.sign(data, jwt_secret);
         // console.log(authToken);
         success = true;
-        res.json({ success, authToken: authToken });
+        res.json({ success, authToken: authToken, userId: user._id });
 
         // res.json(user);
     } catch (error) {
@@ -126,7 +126,7 @@ router.post('/login', [
         const authToken = jwt.sign(data, jwt_secret);
 
         success = true;
-        res.json({ success, authToken: authToken });
+        res.json({ success, authToken: authToken, userId: user._id });
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server error!");

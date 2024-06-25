@@ -33,6 +33,7 @@ function Signup() {
         if (resp.success) { // signUp successful
             // save the authToken and redirect
             localStorage.setItem('token', resp.authToken);
+            localStorage.setItem('userId', resp.userId);
             navigate("/");
             alert('Account created successfully.');
         } else {

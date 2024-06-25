@@ -28,6 +28,7 @@ function Login() {
       // login successful
       // save the authToken and redirect
       localStorage.setItem("token", resp.authToken);
+      localStorage.setItem("userId", resp.userId);
       console.log(resp.authToken);
       navigate("/");
       // props.showAlert("Logged in successfully! Welcome back.", "success");
