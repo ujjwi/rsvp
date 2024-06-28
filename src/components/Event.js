@@ -8,6 +8,7 @@ const Event = ({ event }) => {
     const [isAttending, setIsAttending] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const toggleMenu = () => {
         setShowMenu(!showMenu);
@@ -19,10 +20,13 @@ const Event = ({ event }) => {
     };
 
     const handleDelete = async () => {
-        // Confirm before deleting
-        if (window.confirm("Are you sure you want to delete this event?")) {
-            await deleteEvent(event._id);
-        }
+        setShowMenu(false);
+        setShowDeleteModal(true); // Show the delete confirmation modal
+    };
+
+    const confirmDelete = async () => {
+        await deleteEvent(event._id);
+        setShowDeleteModal(false);
     };
 
     const handleEditSubmit = async (updatedEvent) => {
@@ -135,6 +139,12 @@ const Event = ({ event }) => {
                     onSubmit={handleEditSubmit}
                 />
             )}
+            {showDeleteModal && (
+                <DeleteConfirmationModal
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={confirmDelete}
+                />
+            )}
         </div>
     );
 };
@@ -155,7 +165,7 @@ const EditEventModal = ({ event, onClose, onSubmit }) => {
     };
 
     return (
-        <div className="modal" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}}>
+        <div className="modal" style={{ display: 'block' }}>
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -223,5 +233,28 @@ const EditEventModal = ({ event, onClose, onSubmit }) => {
         </div>
     );
 };
+
+const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
+    <div className="modal" style={{ display: 'block' }}>
+        <div className="modal-dialog">
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h5 className="modal-title">Confirm Deletion</h5>
+                    <button type="button" className="close" onClick={onClose}>
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div className="modal-body">
+                    <p>Are you sure you want to delete this event?</p>
+                </div>
+                <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+                    <button type="button" className="btn btn-danger" onClick={onConfirm}>Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 
 export default Event;
