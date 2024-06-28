@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { EventContext } from '../context/EventContext';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Event = ({ event }) => {
     const host = "http://localhost:5000";
     const [creator, setCreator] = useState(null);
@@ -9,7 +12,7 @@ const Event = ({ event }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+    
     const toggleMenu = () => {
         setShowMenu(!showMenu);
     };
@@ -21,18 +24,28 @@ const Event = ({ event }) => {
 
     const handleDelete = async () => {
         setShowMenu(false);
-        setShowDeleteModal(true); // Show the delete confirmation modal
+        setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
-        await deleteEvent(event._id);
-        setShowDeleteModal(false);
+        try {
+            await deleteEvent(event._id);
+            setShowDeleteModal(false);
+            toast.success("Event deleted successfully!");
+        } catch (error) {
+            toast.error("Failed to delete event. Please try again.");
+        }
     };
 
     const handleEditSubmit = async (updatedEvent) => {
-        await updateEvent(event._id, updatedEvent);
-        getAllEvents();
-        setShowEditModal(false);
+        try {
+            await updateEvent(event._id, updatedEvent);
+            getAllEvents();
+            setShowEditModal(false);
+            toast.success("Event updated successfully!");
+        } catch (error) {
+            toast.error("Failed to update event. Please try again.");
+        }
     };
 
     const fetchCreator = useCallback(async (creatorID) => {

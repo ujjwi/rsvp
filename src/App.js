@@ -8,6 +8,8 @@ import Signup from './components/Signup';
 import Profile from './components/Profile';
 import AuthProvider from './context/AuthContext';
 import EventState from './context/EventContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   BrowserRouter as Router,
@@ -19,6 +21,7 @@ import Event from './components/Event';
 function App() {
   return (
     <>
+    <ToastContainer />
       <AuthProvider>
         <EventState>
           <Router>
