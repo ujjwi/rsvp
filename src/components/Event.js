@@ -11,6 +11,11 @@ const Event = ({ event }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showAttendees, setShowAttendees] = useState(false);
+    
+    const toggleAttendees = () => {
+        setShowAttendees(!showAttendees);
+    };
     
     const toggleMenu = () => {
         setShowMenu(!showMenu);
@@ -140,9 +145,16 @@ const Event = ({ event }) => {
                 </div>
             </div>
             <div className="event-footer">
-                <button type="button" className="btn btn-dark" onClick={isAttending ? handleUnattend : handleAttend}>
-                    {isAttending ? 'Unattend' : 'Attend'}
-                </button>
+                <div>
+                    <button type="button" className="btn btn-link showAttendees" onClick={toggleAttendees}>
+                        Show Attendees
+                    </button>
+                </div>
+                <div>
+                    <button type="button" className="btn btn-dark mt-2" onClick={isAttending ? handleUnattend : handleAttend}>
+                        {isAttending ? 'Unattend' : 'Attend'}
+                    </button>
+                </div>
             </div>
             {showEditModal && (
                 <EditEventModal 
@@ -155,6 +167,13 @@ const Event = ({ event }) => {
                 <DeleteConfirmationModal
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={confirmDelete}
+                />
+            )}
+            {showAttendees && (
+                <AttendeesModal 
+                    attendeeIds={event.attendees}
+                    host={host}
+                    onClose={() => setShowAttendees(false)}
                 />
             )}
         </div>
@@ -268,5 +287,53 @@ const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
     </div>
 );
 
+const AttendeesModal = ({ attendeeIds, host, onClose }) => {
+    const [attendees, setAttendees] = useState([]);
+
+    useEffect(() => {
+        const fetchAttendees = async () => {
+            try {
+                const attendeePromises = attendeeIds.map(id =>
+                    fetch(`${host}/api/auth/getuser/${id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                    }).then(res => res.json())
+                );
+                const attendeeData = await Promise.all(attendeePromises);
+                setAttendees(attendeeData);
+            } catch (error) {
+                console.error("Failed to fetch attendee data", error);
+                toast.error("Failed to load attendees. Please try again.");
+            }
+        };
+
+        fetchAttendees();
+    }, [attendeeIds, host]);
+
+    return (
+        <div className="modal" style={{ display: 'block' }}>
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Attendees</h5>
+                        <button type="button" className="close" onClick={onClose}>
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        {attendees.map(attendee => (
+                            <div key={attendee._id} className="attendee-item mb-3">
+                                <img src={`${host}/${attendee.displayPicture.replace(/\\/g, '/')}`} alt={attendee.name} className="attendee-avatar" />
+                                <span>{attendee.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default Event;

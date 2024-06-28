@@ -28,7 +28,7 @@
   align-items: center;
 }
 
-.event-display-picture {
+.attendee-avatar, .event-display-picture {
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -183,4 +183,10 @@
 
 .modal-body {
   margin-bottom: 15px;
+}
+
+.event-footer .btn-link.showAttendees {
+  color: rgba(23, 17, 17, 0.826);
+  text-align: left;
+  padding: 0;
 }
