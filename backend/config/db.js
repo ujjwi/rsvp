@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const mongoURI = 'mongodb://localhost:27017/rsvp';
+const mongoURI = `mongodb+srv://${process.env.mongo_username}:${encodeURIComponent(process.env.mongo_password)}@cluster0.0wjtagt.mongodb.net/rsvp`;
 
 const connectToMongo = async () => {
     try {

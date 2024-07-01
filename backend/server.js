@@ -18,7 +18,7 @@ app.use(express.json()) // to access req.body
 app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Server is up and running!')
 })
 
 //Available routes
