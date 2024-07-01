@@ -1,18 +1,25 @@
 import React, { useContext } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 // import { FaUserCircle } from 'react-icons/fa';
 
 function Navbar() {
   let location = useLocation();
 
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
 
   const { isLoggedIn, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    // window.location.reload();
+    toast.success("Logged out successfully! See you soon.", {
+      onClose: () => {
+        window.location.href = '/';
+      }
+    });
+    // navigate("/login");
   }
 
   return (

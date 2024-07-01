@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { EventContext } from '../context/EventContext';
+import { AuthContext } from '../context/AuthContext';
 
 import { toast } from 'react-toastify';
 
@@ -12,6 +13,8 @@ const Event = ({ event }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAttendees, setShowAttendees] = useState(false);
+
+    const { isLoggedIn } = useContext(AuthContext);
     
     const toggleAttendees = () => {
         setShowAttendees(!showAttendees);
@@ -90,13 +93,31 @@ const Event = ({ event }) => {
     }, [event, attendingEvents]);
 
     const handleAttend = async () => {
-        await attendEvent(event._id);
-        getEventsAttending();
+        if (isLoggedIn) {
+            try {
+                await attendEvent(event._id);
+                getAllEvents();
+                getEventsAttending();
+            } catch (error) {
+                console.error("Error attending event:", error);
+            }
+        } else {
+            toast.error("You must be logged in to attend an event.");
+        }
     };
 
     const handleUnattend = async () => {
-        await unattendEvent(event._id);
-        getEventsAttending();
+        if (isLoggedIn) {
+            try {
+                await unattendEvent(event._id);
+                getAllEvents();
+                getEventsAttending();
+            } catch (error) {
+                console.error("Error attending event:", error);
+            }
+        } else {
+            toast.error("You must be logged in to unattend an event.");
+        }
     };
 
     if (!event || !creator) return <div>Loading...</div>;

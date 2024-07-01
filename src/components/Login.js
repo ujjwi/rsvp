@@ -32,7 +32,12 @@ function Login() {
       localStorage.setItem("userId", resp.userId);
       console.log(resp.authToken);
       navigate("/");
-      toast.success("Logged in successfully! Welcome back.");
+      // window.location.reload();
+      toast.success("Logged in successfully! Welcome back.", {
+        onClose: () => {
+          window.location.href = '/';
+        }
+      });
     } else {
       toast.error("Invalid credentials! Try again.");
     }
