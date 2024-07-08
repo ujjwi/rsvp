@@ -346,7 +346,7 @@ const AttendeesModal = ({ attendeeIds, host, onClose }) => {
                     <div className="modal-body">
                         {attendees.map(attendee => (
                             <div key={attendee._id} className="attendee-item mb-3">
-                                <img src={`${host}/${attendee.displayPicture.replace(/\\/g, '/')}`} alt={attendee.name} className="attendee-avatar" />
+                                <img src={dpscr} alt={attendee.name} className="attendee-avatar" />
                                 <span>{attendee.name}</span>
                             </div>
                         ))}
