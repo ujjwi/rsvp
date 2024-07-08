@@ -4,33 +4,20 @@ import User from '../models/User.js'
 import Event from '../models/Event.js'
 import { body, validationResult } from 'express-validator'
 import multer from 'multer'; // to receive a file(image) through form
-import { v4 as uuidv4 } from 'uuid'; // for generating unique filenames
 import bcrypt from 'bcryptjs'; // for salting passwords and creating hash from them
 import jwt from 'jsonwebtoken'; // for saving user-session
 import 'dotenv/config';
-import fs from 'fs'; // for file system operations
 import fetchUser from '../middlewares/fetchUser.js' // using the fetchUser middleware
+import { cloudinary, storage } from '../config/cloudinary.js';
 
 const jwt_secret = process.env.secret_key;
 
-const storage = multer.diskStorage({
-    // these functions will be executed whenever a new file is received
-    destination: function (req, file, cb) {
-        cb(null, './uploads/');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = uuidv4() + '-' + Date.now();
-        const fileExtension = file.mimetype.split('/')[1];
-        cb(null, uniqueSuffix + '.' + fileExtension); // generate unique filename
-    }
-})
-
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
         cb(null, true); //accepts a file
     }
     else {
-        cb(new Error('Image should be in jpeg or png format'), false); //rejects a file
+        cb(new Error('Image should be in jpeg or jpg or png format'), false); //rejects a file
     }
 };
 
@@ -71,7 +58,7 @@ router.post('/createuser', upload.single('displayPicture'), [
             name: req.body.name,
             password: secPass,
             email: req.body.email,
-            displayPicture: req.file ? req.file.path : "uploads/Default_pfp.jpg" // use default if no file
+            displayPicture: req.file ? req.file.path : "https://res.cloudinary.com/dsu8wafxc/image/upload/v1720446094/Default_pfp_be3kok.png" // use default if no file
         })
 
         const data = {
@@ -188,12 +175,10 @@ router.put('/updateuser', fetchUser, upload.single('displayPicture'), [
         // Check if display picture is being updated
         if (req.file) {
             const user = await User.findById(userId);
-            if (user.displayPicture && user.displayPicture !== "uploads/Default_pfp.jpg") {
-                fs.unlink(user.displayPicture, (err) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                });
+            // Delete old image from Cloudinary if it exists and is not the default
+            if (user.displayPicture && !user.displayPicture.includes('Default_pfp')) {
+              const publicId = user.displayPicture.split('/').pop().split('.')[0];
+              await cloudinary.uploader.destroy(publicId);
             }
             userUpdates.displayPicture = req.file.path;
         }
@@ -249,12 +234,9 @@ router.delete('/deleteuser', fetchUser, [
         );
 
         // Delete the user's display picture if it's not the default one
-        if (user.displayPicture && user.displayPicture !== "uploads/Default_pfp.jpg") {
-            fs.unlink(user.displayPicture, (err) => {
-                if (err) {
-                    console.error(err);
-                }
-            });
+        if (user.displayPicture && !user.displayPicture.includes('Default_pfp')) {
+            const publicId = user.displayPicture.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
         }
 
         // Delete the user

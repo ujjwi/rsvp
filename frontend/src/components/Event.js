@@ -122,7 +122,7 @@ const Event = ({ event }) => {
 
     if (!event || !creator) return <div>Loading...</div>;
 
-    const dpscr = `${host}/${creator.displayPicture.replace(/\\/g, '/')}`;
+    const dpscr = creator.displayPicture;
 
     const isHost = localStorage.getItem('userId') && localStorage.getItem('userId') === event.createdBy;
 

@@ -7,7 +7,7 @@ import eventRoutes from './routes/event.js';
 connectToMongo();
 
 const app = express()
-const port = 5000
+const port = process.env.PORT || 5000
 
 // Use the cors middleware
 app.use(cors());
