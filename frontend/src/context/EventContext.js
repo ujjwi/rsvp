@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 export const EventContext = createContext();
 
 const EventState = ({ children }) => {
-    const host = "http://localhost:5000";
+    const host = "https://rsvp-backend-iwyf.onrender.com";
 
     const [events, setEvents] = useState([]);
     const [attendingEvents, setAttendingEvents] = useState([]);

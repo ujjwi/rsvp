@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Event = ({ event }) => {
-    const host = "http://localhost:5000";
+    const host = "https://rsvp-backend-iwyf.onrender.com";
     const [creator, setCreator] = useState(null);
     const { getAllEvents, attendEvent, unattendEvent, attendingEvents, getEventsAttending, updateEvent, deleteEvent } = useContext(EventContext);
     const [isAttending, setIsAttending] = useState(false);

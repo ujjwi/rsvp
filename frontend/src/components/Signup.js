@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function Signup() {
-    const host = "http://localhost:5000";
+    const host = "https://rsvp-backend-iwyf.onrender.com";
 
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
     const [displayPicture, setDisplayPicture] = useState(null);
