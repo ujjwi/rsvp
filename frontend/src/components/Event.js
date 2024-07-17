@@ -122,15 +122,13 @@ const Event = ({ event }) => {
 
     if (!event || !creator) return <div>Loading...</div>;
 
-    const dpscr = creator.displayPicture;
-
     const isHost = localStorage.getItem('userId') && localStorage.getItem('userId') === event.createdBy;
 
     return (
         <div className="event-container gradient-background">
             <div className="event-header">
                 <div className="event-uploader-container">
-                    <img src={dpscr} alt="Display Picture" className="event-display-picture" />
+                    <img src={creator.displayPicture} alt="Display Picture" className="event-display-picture" />
                     <div className="event-uploader">{creator.name}</div>
                 </div>
                 {isHost && (
@@ -148,8 +146,12 @@ const Event = ({ event }) => {
                         </svg>
                         {showMenu && (
                             <div className="dropdown-menu show">
-                                <button className="dropdown-item" onClick={handleEdit}>Edit</button>
-                                <button className="dropdown-item" onClick={handleDelete}>Remove</button>
+                                <button className="dropdown-item" onClick={handleEdit}>
+                                    <img className="dropdown-icon" src="images/edit.png" alt="edit-event" /> Edit
+                                </button>
+                                <button className="dropdown-item" onClick={handleDelete}>
+                                    <img className="dropdown-icon" src="images/delete.png" alt="delete-event" /> Remove
+                                </button>
                             </div>
                         )}
                     </div>
@@ -346,7 +348,7 @@ const AttendeesModal = ({ attendeeIds, host, onClose }) => {
                     <div className="modal-body">
                         {attendees.map(attendee => (
                             <div key={attendee._id} className="attendee-item mb-3">
-                                <img src={dpscr} alt={attendee.name} className="attendee-avatar" />
+                                <img src={attendee.displayPicture} alt={attendee.name} className="attendee-avatar" />
                                 <span>{attendee.name}</span>
                             </div>
                         ))}
