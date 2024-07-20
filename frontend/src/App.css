@@ -370,3 +370,26 @@
   object-fit: cover;
   margin-bottom: 20px;
 }
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000;
+}
+
+.tabs .active {
+  border-bottom: 2px solid #000;
+}
+
+.events-container {
+  margin-top: 20px;
+}

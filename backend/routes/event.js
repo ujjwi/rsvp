@@ -8,30 +8,22 @@ import mongoose from 'mongoose';
 
 
 // Route 1 : Get all the events that user has marked to visit : GET "/api/event/eventsvisiting" - login required 
-router.get('/eventsvisiting', fetchUser, async (req, res) => {
+router.get('/eventsvisiting/:userId', async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate('eventsAttending');
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        res.json(user.eventsAttending);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send("Server error!");
+      const events = await Event.find({ attendees: req.params.userId });
+      res.json(events);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch attending events' });
     }
 });
 
 // Route 2 : Get all the events that user is hosting : GET "/api/event/eventsvisiting" - login required 
-router.get('/eventshosting', fetchUser, async (req, res) => {
+router.get('/eventshosting/:userId', async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate('eventsHosting');
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        res.json(user.eventsHosting);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send("Server error!");
+      const events = await Event.find({ createdBy: req.params.userId });
+      res.json(events);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch hosting events' });
     }
 });
 
@@ -253,7 +245,7 @@ router.delete('/deleteevent/:id', fetchUser, async (req, res) => {
     }
 });
 
-// Remove an event from the user's eventsAttending list : DELETE "/api/event/unattendevent/:id" - login required
+// Route 9 : Remove an event from the user's eventsAttending list : DELETE "/api/event/unattendevent/:id" - login required
 router.delete('/unattendevent/:id', fetchUser, async (req, res) => {
     try {
         const isValidObjectId = mongoose.Types.ObjectId.isValid(req.params.id);
