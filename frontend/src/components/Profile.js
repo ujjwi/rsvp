@@ -17,11 +17,11 @@ function Profile(props) {
         setUser(data);
 
         // Fetch events attending and hosting
-        const attendingResponse = await fetch(`${host}/api/events/eventsvisiting/${props.id}`);
+        const attendingResponse = await fetch(`${host}/api/event/eventsvisiting/${props.id}`);
         const attendingData = await attendingResponse.json();
         setEventsAttending(attendingData);
 
-        const hostingResponse = await fetch(`${host}/api/events/eventshosting/${props.id}`);
+        const hostingResponse = await fetch(`${host}/api/event/eventshosting/${props.id}`);
         const hostingData = await hostingResponse.json();
         setEventsHosting(hostingData);
 
