@@ -1,26 +1,67 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+}
+
+.tabs .active {
+  border-bottom: 2px solid #fff;
+}
+
+.events-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .event-container {
   color: #333;
   padding: 20px;
   border: 0px solid #ccc;
   border-radius: 10px;
-  padding: 20px;
-  /* margin: 20px; */
   background-color: #fff;
   width: 350px;
 }
 
 .gradient-background {
   background: linear-gradient(to bottom, #ff9a9e, #cca550);
-  /* Fallback for older browsers */
-  background: -webkit-linear-gradient(to bottom, #ff9a9e, #deaa57);
-  background: -moz-linear-gradient(to bottom, #ff9a9e, #e6ae4e);
 }
 
 .gradient-background2 {
   background: linear-gradient(to bottom, #113aef, #f251f2);
-  /* Fallback for older browsers */
-  /* background: -webkit-linear-gradient(to bottom, #ff9a9e, #deaa57);
-  background: -moz-linear-gradient(to bottom, #ff9a9e, #e6ae4e); */
 }
 
 .event-header {
@@ -57,10 +98,6 @@
   margin-bottom: 10px;
 }
 
-/* .event-footer {
-    text-align: center;
-  } */
-
 .event-footer button {
   padding: 10px 20px;
   font-size: 1em;
@@ -78,7 +115,7 @@
 }
 
 .event-uploader {
-  margin-left: 10px; /* Adjust as needed for spacing */
+  margin-left: 10px;
 }
 
 .bi-three-dots-vertical {
@@ -86,10 +123,8 @@
 }
 
 .menu {
-  /* position: absolute; */
   top: 30px;
   right: 0;
-  /* background: white; */
   border: 1px solid #ccc;
   padding: 4px;
   border-radius: 5px;
@@ -335,12 +370,12 @@
 
 @media (max-width: 768px) {
   .create-event-container {
-      padding: 10px;
+    padding: 10px;
   }
 
   .btn-create {
-      width: 100%;
-      padding: 12px;
+    width: 100%;
+    padding: 12px;
   }
 }
 
@@ -391,5 +426,8 @@
 }
 
 .events-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 20px;
 }

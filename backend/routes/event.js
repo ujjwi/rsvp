@@ -6,8 +6,35 @@ import fetchUser from '../middlewares/fetchUser.js'
 import {body, validationResult} from 'express-validator'
 import mongoose from 'mongoose';
 
+// Route 1 : Get all the events that current user has marked to visit : GET "/api/event/eventsvisiting" - login required 
+router.get('/eventsvisiting', fetchUser, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate('eventsAttending');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user.eventsAttending);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
 
-// Route 1 : Get all the events that user has marked to visit : GET "/api/event/eventsvisiting" - login required 
+// Route 2 : Get all the events that current user is hosting : GET "/api/event/eventsvisiting" - login required 
+router.get('/eventshosting', fetchUser, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate('eventsHosting');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user.eventsHosting);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error!");
+    }
+});
+
+// Route 1 : Get all the events that user has marked to visit by user id : GET "/api/event/eventsvisiting/:userId" - login required 
 router.get('/eventsvisiting/:userId', async (req, res) => {
     try {
       const events = await Event.find({ attendees: req.params.userId });
@@ -17,7 +44,7 @@ router.get('/eventsvisiting/:userId', async (req, res) => {
     }
 });
 
-// Route 2 : Get all the events that user is hosting : GET "/api/event/eventsvisiting" - login required 
+// Route 2 : Get all the events that user is hosting : GET "/api/event/eventsvisiting/:userId" - login required 
 router.get('/eventshosting/:userId', async (req, res) => {
     try {
       const events = await Event.find({ createdBy: req.params.userId });
