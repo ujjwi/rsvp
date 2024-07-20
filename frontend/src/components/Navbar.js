@@ -165,7 +165,7 @@ function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        to="/userProfile"
+                        to="/profile"
                       >
                         <img className="dropdown-icon" src="images/user.png" alt="create-event" />
                         View profile

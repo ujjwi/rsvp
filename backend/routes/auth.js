@@ -227,10 +227,9 @@ router.delete('/deleteuser', fetchUser, [
             { $pull: { attendees: userId } }
         );
 
-        // Remove user from any events they are hosting
-        await Event.updateMany(
-            { createdBy: userId },
-            { $unset: { createdBy: "" } }
+        // Remove any events they are hosting
+        await Event.deleteMany(
+            { createdBy: userId }
         );
 
         // Delete the user's display picture if it's not the default one

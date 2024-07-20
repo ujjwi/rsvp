@@ -34,8 +34,8 @@ function App() {
               <Route exact path="/about" element={<About />} />
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/signup" element={<Signup />} />
-              <Route exact path="/profile" element={<Profile />} />
-              <Route exact path="/event" element={<Event id={'6676796880c938d4b835c5b2'} />} />
+              <Route exact path="/profile" element={<Profile id={localStorage.getItem("userId")}/>} />
+              {/* <Route exact path="/event" element={<Event id={'6676796880c938d4b835c5b2'} />} /> */}
               <Route exact path="/createEvent" element={<CreateEvent />} />
             </Routes>
           </Router>
