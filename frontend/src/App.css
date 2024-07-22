@@ -1,5 +1,5 @@
 .container {
-  max-width: 1200px;
+  /* max-width: 1200px; */
   margin: 0 auto;
 }
 
@@ -76,8 +76,20 @@
   margin-right: 10px;
 }
 
+.attendee-item a {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.attendee-item .attendee-name {
+  color: #000;
+}
+
+
 .event-uploader {
   font-weight: bold;
+  color: #000;
 }
 
 .event-details {
@@ -112,6 +124,7 @@
 .event-uploader-container {
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
 .event-uploader {

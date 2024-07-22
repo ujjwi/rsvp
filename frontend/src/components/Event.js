@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { EventContext } from '../context/EventContext';
 import { AuthContext } from '../context/AuthContext';
-
+import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 const Event = ({ event }) => {
@@ -127,10 +127,10 @@ const Event = ({ event }) => {
     return (
         <div className="event-container gradient-background">
             <div className="event-header">
-                <div className="event-uploader-container">
+                <Link className="event-uploader-container" to={`/profile/${creator._id}`}>
                     <img src={creator.displayPicture} alt="Display Picture" className="event-display-picture" />
                     <div className="event-uploader">{creator.name}</div>
-                </div>
+                </Link>
                 {isHost && (
                     <div className="dropdown">
                         <svg 
@@ -312,6 +312,7 @@ const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
 
 const AttendeesModal = ({ attendeeIds, host, onClose }) => {
     const [attendees, setAttendees] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchAttendees = async () => {
@@ -329,6 +330,8 @@ const AttendeesModal = ({ attendeeIds, host, onClose }) => {
             } catch (error) {
                 console.error("Failed to fetch attendee data", error);
                 toast.error("Failed to load attendees. Please try again.");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -346,12 +349,20 @@ const AttendeesModal = ({ attendeeIds, host, onClose }) => {
                         </button>
                     </div>
                     <div className="modal-body">
-                        {attendees.map(attendee => (
-                            <div key={attendee._id} className="attendee-item mb-3">
-                                <img src={attendee.displayPicture} alt={attendee.name} className="attendee-avatar" />
-                                <span>{attendee.name}</span>
-                            </div>
-                        ))}
+                        {loading ? (
+                            <div>Loading...</div>
+                        ) : attendees.length === 0 ? (
+                            <div>No attendees yet</div>
+                        ) : (
+                            attendees.map(attendee => (
+                                <div key={attendee._id} className="attendee-item mb-3">
+                                    <Link to={`/profile/${attendee._id}`}>
+                                        <img src={attendee.displayPicture} alt={attendee.name} className="attendee-avatar" />
+                                        <span className='attendee-name'>{attendee.name}</span>
+                                    </Link>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

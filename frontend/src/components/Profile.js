@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Event from './Event';
 import { EventContext } from '../context/EventContext';
+import { useParams } from 'react-router-dom';
 
-function Profile(props) {
+function Profile() {
+  const { id } = useParams();
   const host = "https://rsvp-backend-iwyf.onrender.com";
   const { events, getAllEvents } = useContext(EventContext);
 
@@ -15,16 +17,16 @@ function Profile(props) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${host}/api/auth/getuser/${props.id}`);
+        const response = await fetch(`${host}/api/auth/getuser/${id}`);
         const data = await response.json();
         setUser(data);
 
         // Fetch events attending and hosting
-        const attendingResponse = await fetch(`${host}/api/event/eventsvisiting/${props.id}`);
+        const attendingResponse = await fetch(`${host}/api/event/eventsvisiting/${id}`);
         const attendingData = await attendingResponse.json();
         setEventsAttending(attendingData);
 
-        const hostingResponse = await fetch(`${host}/api/event/eventshosting/${props.id}`);
+        const hostingResponse = await fetch(`${host}/api/event/eventshosting/${id}`);
         const hostingData = await hostingResponse.json();
         setEventsHosting(hostingData);
 
@@ -38,7 +40,7 @@ function Profile(props) {
     };
 
     fetchUserData();
-  }, [props.id]);
+  }, [id]);
 
   return (
     <div style={{ backgroundColor: 'black', paddingTop: '100px' }}>
@@ -52,7 +54,6 @@ function Profile(props) {
             />
           )}
           <h2>{user.name}</h2>
-          <p>{user.email}</p>
         </div>
         <div className="tabs">
           <button onClick={() => setActiveTab('attending')} style={{ color: 'white' }} className={activeTab === 'attending' ? 'active' : ''}>Events Attending</button>

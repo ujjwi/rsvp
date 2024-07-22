@@ -165,7 +165,7 @@ function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        to="/profile"
+                        to={`/profile/${localStorage.getItem("userId")}`}
                       >
                         <img className="dropdown-icon" src="images/user.png" alt="create-event" />
                         View profile
