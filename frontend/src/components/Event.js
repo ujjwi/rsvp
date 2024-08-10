@@ -147,10 +147,10 @@ const Event = ({ event }) => {
                         {showMenu && (
                             <div className="dropdown-menu show">
                                 <button className="dropdown-item" onClick={handleEdit}>
-                                    <img className="dropdown-icon" src="images/edit.png" alt="edit-event" /> Edit
+                                    <img className="dropdown-icon" src="/images/edit.png" alt="edit-event" /> Edit
                                 </button>
                                 <button className="dropdown-item" onClick={handleDelete}>
-                                    <img className="dropdown-icon" src="images/delete.png" alt="delete-event" /> Remove
+                                    <img className="dropdown-icon" src="/images/delete.png" alt="delete-event" /> Remove
                                 </button>
                             </div>
                         )}
