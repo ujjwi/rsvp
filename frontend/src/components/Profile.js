@@ -3,6 +3,7 @@ import Event from "./Event";
 import { EventContext } from "../context/EventContext";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import bcrypt from 'bcryptjs';
 
 function Profile() {
   const { id } = useParams();
@@ -69,9 +70,11 @@ function Profile() {
 
   const confirmDelete = async (enteredPassword) => {
     try {
-      if (!enteredPassword || password !== enteredPassword) {
+      const isMatch = await bcrypt.compare(enteredPassword, password);
+      if (!enteredPassword || !isMatch) {
         console.log(enteredPassword);
-        toast.error("Wrong Password!!");
+        console.log(password);
+        toast.error("Enter your password");
         return;
       }
   
@@ -86,9 +89,15 @@ function Profile() {
   
       const data = await response.json();
       if (data.success) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        window.location.href = "/"; // Redirect to home or login after account deletion
+        // Remove items from localStorage before redirecting
+        await new Promise((resolve) => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          resolve();
+        });
+  
+        // Redirect after clearing localStorage
+        window.location.href = "/";
         toast.success("Account deleted successfully");
       } else {
         console.error("Error deleting account:", data.error);
@@ -97,6 +106,7 @@ function Profile() {
       console.error("Error deleting account:", error);
     }
   };
+  
   
   
 
