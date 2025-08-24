@@ -173,7 +173,6 @@ rsvp/
 - **Create Events**: Users can create events with title, description, start/end times, and location
 - **Edit Events**: Event creators can modify event details
 - **Delete Events**: Event creators can remove their events
-- **Event Discovery**: Browse all upcoming events with real-time filtering
 
 ### RSVP System
 - **Attend Events**: Users can RSVP to events they want to attend
@@ -208,12 +207,6 @@ rsvp/
 - **CORS Protection**: Cross-origin resource sharing configuration
 - **File Upload Security**: File type and size validation
 
-Run tests with:
-```bash
-cd frontend
-npm test
-```
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -225,8 +218,8 @@ npm test
 ## 👨‍💻 Author
 
 **Ujjwal Raj**
-- GitHub: [@your-username](https://github.com/ujjwi)
-- LinkedIn: [Your LinkedIn](https://leetcode.com/u/ujjwal018/)
+- GitHub: [ujjwi](https://github.com/ujjwi)
+- LinkedIn: [ujjwal018](https://www.linkedin.com/in/ujjwal018/)
 
 ## 🙏 Acknowledgments
 
