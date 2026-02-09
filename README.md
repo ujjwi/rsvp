@@ -29,6 +29,7 @@ A full-stack web application for managing events and RSVPs, built with React.js 
 - **CSS3** - Custom styling and animations
 
 ### Backend
+- **TypeScript** - Type-safe JavaScript
 - **Node.js** - JavaScript runtime environment
 - **Express.js 4.19.2** - Web application framework
 - **MongoDB 8.4.1** - NoSQL database with Mongoose ODM
@@ -59,13 +60,15 @@ rsvp/
 │   │   ├── App.js           # Main application component
 │   │   └── index.js         # Application entry point
 │   └── package.json
-├── backend/                  # Node.js backend server
-│   ├── config/              # Configuration files
-│   ├── middlewares/         # Custom middleware
-│   ├── models/              # Database models
-│   ├── routes/              # API route handlers
-│   ├── uploads/             # File upload directory
-│   ├── server.js            # Main server file
+├── backend/                  # TypeScript backend (runs directly, no compile)
+│   ├── src/                 # TypeScript source
+│   │   ├── config/          # Configuration files
+│   │   ├── middlewares/     # Custom middleware
+│   │   ├── models/          # Database models
+│   │   ├── routes/          # API route handlers
+│   │   └── server.ts        # Main server file
+│   ├── rsvp-postman-collection.json  # Postman API collection
+│   ├── POSTMAN_TESTING.md   # API testing guide
 │   └── package.json
 └── README.md
 ```
@@ -133,9 +136,11 @@ rsvp/
 1. **Start the Backend Server**
    ```bash
    cd backend
-   npm start
+   npm run dev    # Development with hot reload
+   # OR
+   npm start      # Production
    ```
-   The server will run on `http://localhost:5000`
+   The server will run on `http://localhost:5000` (TypeScript runs directly, no build step)
 
 2. **Start the Frontend Development Server**
    ```bash
@@ -147,6 +152,12 @@ rsvp/
 3. **Access the Application**
    - Frontend: `http://localhost:3000`
    - Backend API: `http://localhost:5000`
+
+### Testing with Postman
+See [`backend/POSTMAN_TESTING.md`](backend/POSTMAN_TESTING.md) for a full guide. Quick start:
+1. Import `backend/rsvp-postman-collection.json` into Postman
+2. Start the backend with `npm run dev`
+3. Run requests against `http://localhost:5000`
 
 ## 🔧 API Endpoints
 
@@ -191,8 +202,10 @@ rsvp/
 ### Backend Deployment (Render)
 1. Push your code to GitHub
 2. Connect your repository to Render
-3. Set environment variables in Render dashboard
-4. Deploy the Node.js service
+3. **Build Command:** `npm install`
+4. **Start Command:** `npm start` (runs TypeScript directly via tsx, no compile step)
+5. Set environment variables in Render dashboard
+6. Root directory: `rsvp/backend` (if backend is in a subfolder)
 
 ### Frontend Deployment (Netlify/Vercel)
 1. Build the production version: `npm run build`
