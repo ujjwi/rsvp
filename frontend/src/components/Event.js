@@ -4,8 +4,9 @@ import { AuthContext } from '../context/AuthContext';
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 
+import API_BASE_URL from '../config';
+
 const Event = ({ event }) => {
-    const host = "https://rsvp-backend-iwyf.onrender.com";
     const [creator, setCreator] = useState(null);
     const { getAllEvents, attendEvent, unattendEvent, attendingEvents, getEventsAttending, updateEvent, deleteEvent } = useContext(EventContext);
     const [isAttending, setIsAttending] = useState(false);
@@ -57,7 +58,7 @@ const Event = ({ event }) => {
 
     const fetchCreator = useCallback(async (creatorID) => {
         try {
-            const response = await fetch(`${host}/api/auth/getuser/${creatorID}`, {
+            const response = await fetch(`${API_BASE_URL}/api/auth/getuser/${creatorID}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -73,7 +74,7 @@ const Event = ({ event }) => {
         } catch (error) {
             console.error("Failed to fetch creator data", error);
         }
-    }, [host]);
+    }, []);
 
     useEffect(() => {
         if (localStorage.getItem('token'))
@@ -195,7 +196,7 @@ const Event = ({ event }) => {
             {showAttendees && (
                 <AttendeesModal 
                     attendeeIds={event.attendees}
-                    host={host}
+                    host={API_BASE_URL}
                     onClose={() => setShowAttendees(false)}
                 />
             )}

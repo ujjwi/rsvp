@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import API_BASE_URL from "../config";
+import { AuthContext } from "../context/AuthContext";
 
 function Signup() {
-    const host = "https://rsvp-backend-iwyf.onrender.com";
-
+    const { login } = useContext(AuthContext);
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
     const [displayPicture, setDisplayPicture] = useState(null);
-
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { name, email, password } = credentials;
 
-        // Create a FormData object
         const formData = new FormData();
         formData.append('name', name);
         formData.append('email', email);
@@ -23,18 +22,15 @@ function Signup() {
             formData.append('displayPicture', displayPicture);
         }
 
-        const response = await fetch(`${host}/api/auth/createuser`, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/createuser`, {
             method: "POST",
             body: formData,
         });
 
         const resp = await response.json();
-        console.log(resp);
 
-        if (resp.success) { // signUp successful
-            // save the authToken and redirect
-            localStorage.setItem('token', resp.authToken);
-            localStorage.setItem('userId', resp.userId);
+        if (resp.success) {
+            login({ token: resp.authToken, userId: resp.userId });
             navigate("/");
             toast.success("Account created successfully.");
         } else {

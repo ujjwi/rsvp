@@ -4,10 +4,10 @@ import { EventContext } from "../context/EventContext";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import bcrypt from 'bcryptjs';
+import API_BASE_URL from "../config";
 
 function Profile() {
   const { id } = useParams();
-  const host = "https://rsvp-backend-iwyf.onrender.com";
   const { events, getAllEvents } = useContext(EventContext);
 
   const [user, setUser] = useState({});
@@ -25,20 +25,20 @@ function Profile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${host}/api/auth/getuser/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/auth/getuser/${id}`);
         const data = await response.json();
         setUser(data);
         setPassword(data.password);
 
         // Fetch events attending and hosting
         const attendingResponse = await fetch(
-          `${host}/api/event/eventsvisiting/${id}`
+          `${API_BASE_URL}/api/event/eventsvisiting/${id}`
         );
         const attendingData = await attendingResponse.json();
         setEventsAttending(attendingData);
 
         const hostingResponse = await fetch(
-          `${host}/api/event/eventshosting/${id}`
+          `${API_BASE_URL}/api/event/eventshosting/${id}`
         );
         const hostingData = await hostingResponse.json();
         setEventsHosting(hostingData);
@@ -78,7 +78,7 @@ function Profile() {
         return;
       }
   
-      const response = await fetch(`${host}/api/auth/deleteuser`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/deleteuser`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +121,7 @@ function Profile() {
         formData.append("displayPicture", updatedUser.displayPicture);
       }
   
-      const response = await fetch(`${host}/api/auth/updateuser`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/updateuser`, {
         method: "PUT",
         headers: {
           "auth-token": localStorage.getItem('token')

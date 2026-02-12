@@ -2,13 +2,12 @@ import React, { useContext, useEffect, useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import API_BASE_URL from "../config";
 // import { FaUserCircle } from 'react-icons/fa';
 
 function Navbar() {
   let location = useLocation();
   // let navigate = useNavigate();
-
-  const host = "https://rsvp-backend-iwyf.onrender.com";
   const [currentUser, setCurrentUser] = useState(null);
   const { isLoggedIn, logout } = useContext(AuthContext);
 
@@ -27,7 +26,7 @@ function Navbar() {
     async (currentUserId) => {
       try {
         const response = await fetch(
-          `${host}/api/auth/getuser/${currentUserId}`,
+          `${API_BASE_URL}/api/auth/getuser/${currentUserId}`,
           {
             method: "GET",
             headers: {
@@ -46,14 +45,14 @@ function Navbar() {
         console.error("Failed to fetch creator data", error);
       }
     },
-    [host]
+    []
   );
 
   useEffect(() => {
     if (isLoggedIn) {
       fetchCurrentUser(localStorage.getItem("userId"));
     }
-  }, [fetchCurrentUser]);
+  }, [isLoggedIn, fetchCurrentUser]);
 
   return (
     <div>

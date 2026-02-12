@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import API_BASE_URL from "../config";
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
-  const host = "https://rsvp-backend-iwyf.onrender.com";
-
+  const { login } = useContext(AuthContext);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${host}/api/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,21 +23,11 @@ function Login() {
     });
 
     const resp = await response.json();
-    console.log(resp);
 
     if (resp.success) {
-      // login successful
-      // save the authToken and redirect
-      localStorage.setItem("token", resp.authToken);
-      localStorage.setItem("userId", resp.userId);
-      console.log(resp.authToken);
+      login({ token: resp.authToken, userId: resp.userId });
       navigate("/");
-      // window.location.reload();
-      toast.success("Logged in successfully! Welcome back.", {
-        onClose: () => {
-          window.location.href = '/';
-        }
-      });
+      toast.success("Logged in successfully! Welcome back.");
     } else {
       toast.error("Invalid credentials! Try again.");
     }

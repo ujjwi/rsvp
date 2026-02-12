@@ -1,9 +1,9 @@
 import React, { createContext, useState } from 'react';
+import API_BASE_URL from '../config';
 
 export const EventContext = createContext();
 
 const EventState = ({ children }) => {
-    const host = "https://rsvp-backend-iwyf.onrender.com";
 
     const [events, setEvents] = useState([]);
     const [attendingEvents, setAttendingEvents] = useState([]);
@@ -13,7 +13,7 @@ const EventState = ({ children }) => {
     // Get all events
     const getAllEvents = async () => {
         try {
-            const response = await fetch(`${host}/api/event/getallevents`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/getallevents`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -30,7 +30,7 @@ const EventState = ({ children }) => {
     // Get events user is attending
     const getEventsAttending = async () => {
         try {
-            const response = await fetch(`${host}/api/event/eventsvisiting`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/eventsvisiting`, {
                 method: "GET",
                 headers: {
                     "auth-token": localStorage.getItem('token')
@@ -47,7 +47,7 @@ const EventState = ({ children }) => {
     // Get events user is hosting
     const getEventsHosting = async () => {
         try {
-            const response = await fetch(`${host}/api/event/eventshosting`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/eventshosting`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const EventState = ({ children }) => {
     // Get event by ID
     const getEventById = async (id) => {
         try {
-            const response = await fetch(`${host}/api/event/getallevents/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/getallevents/${id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -82,7 +82,7 @@ const EventState = ({ children }) => {
     // Add new event
     const addEvent = async (event) => {
         try {
-            const response = await fetch(`${host}/api/event/addevent`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/addevent`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const EventState = ({ children }) => {
     // Update event
     const updateEvent = async (id, updatedEvent) => {
         try {
-            const response = await fetch(`${host}/api/event/updateevent/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/updateevent/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -123,7 +123,7 @@ const EventState = ({ children }) => {
     // Delete event
     const deleteEvent = async (id) => {
         try {
-            await fetch(`${host}/api/event/deleteevent/${id}`, {
+            await fetch(`${API_BASE_URL}/api/event/deleteevent/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -141,7 +141,7 @@ const EventState = ({ children }) => {
     // Attend event
     const attendEvent = async (id) => {
         try {
-            const response = await fetch(`${host}/api/event/attendevent/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/attendevent/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -159,7 +159,7 @@ const EventState = ({ children }) => {
     // Unattend event
     const unattendEvent = async (id) => {
         try {
-            const response = await fetch(`${host}/api/event/unattendevent/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/event/unattendevent/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
