@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { EventContext } from '../context/EventContext';
 import { toast } from 'react-toastify';
 
 const CreateEvent = () => {
+    const navigate = useNavigate();
     const { addEvent } = useContext(EventContext);
     const [event, setEvent] = useState({
         title: '',
@@ -25,6 +27,7 @@ const CreateEvent = () => {
         try {
             await addEvent(event);
             toast.success("Event created successfully!");
+            navigate("/");
         } catch (error) {
             toast.error("Failed to create event. Please try again.");
             console.error("Error creating event:", error);
@@ -32,6 +35,7 @@ const CreateEvent = () => {
     };
 
     return (
+        <div className="page-wrapper">
         <div className="create-event-container">
             <h2>Create New Event</h2>
             <form onSubmit={handleSubmit}>
@@ -91,6 +95,7 @@ const CreateEvent = () => {
                 </div>
                 <button type="submit" className="btn btn-primary mt-3 btn-create">Create Event</button>
             </form>
+        </div>
         </div>
     );
 };

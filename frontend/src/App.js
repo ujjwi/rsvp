@@ -18,6 +18,7 @@ import {
 } from 'react-router-dom';
 import Event from './components/Event';
 import CreateEvent from './components/CreateEvent';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/profile/:id" element={<Profile />} />
               {/* <Route exact path="/event" element={<Event id={'6676796880c938d4b835c5b2'} />} /> */}
-              <Route exact path="/createEvent" element={<CreateEvent />} />
+              <Route exact path="/createEvent" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
             </Routes>
           </Router>
         </EventState>

@@ -144,7 +144,7 @@ function Profile() {
 
 
   return (
-    <div style={{ backgroundColor: "black", paddingTop: "100px" }}>
+    <div className="page-wrapper">
       <div className="container">
         <div className="profile-card-container">
           <div className="profile-card">
@@ -173,19 +173,11 @@ function Profile() {
                   {showMenu && (
                     <div className="dropdown-menu show">
                       <button className="dropdown-item" onClick={handleEdit}>
-                        <img
-                          className="dropdown-icon"
-                          src="/images/edit.png"
-                          alt="edit-profile"
-                        />{" "}
+                        <img className="dropdown-icon" src="/images/edit.png" alt="edit-profile" />
                         Edit profile
                       </button>
                       <button className="dropdown-item" onClick={handleDelete}>
-                        <img
-                          className="dropdown-icon"
-                          src="/images/delete.png"
-                          alt="delete-profile"
-                        />{" "}
+                        <img className="dropdown-icon" src="/images/delete.png" alt="delete-profile" />
                         Delete account
                       </button>
                     </div>

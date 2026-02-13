@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../config";
-// import { FaUserCircle } from 'react-icons/fa';
 
 function Navbar() {
   let location = useLocation();
@@ -166,7 +165,7 @@ function Navbar() {
                         className="dropdown-item"
                         to={`/profile/${localStorage.getItem("userId")}`}
                       >
-                        <img className="dropdown-icon" src="/images/user.png" alt="create-event" />
+                        <img className="dropdown-icon" src="/images/user.png" alt="user-profile" />
                         View profile
                       </Link>
                     </li>
@@ -176,7 +175,7 @@ function Navbar() {
                         href="#"
                         onClick={handleLogout}
                       >
-                        <img className="dropdown-icon" src="/images/logout.png" alt="create-event" />
+                        <img className="dropdown-icon" src="/images/logout.png" alt="log-out" />
                         Log out
                       </a>
                     </li>

@@ -17,21 +17,28 @@ function Home() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: 'black', paddingTop: '100px' }}>
+    <div className="page-wrapper">
       <div className="container">
         {loading ? (
-          <div className="spinner-border text-light spinner-home" role="status">
+          <div className="spinner-border text-light spinner-home" role="status" aria-hidden="true">
           </div>
         ) : (
           <>
-          <h2 style={{ color: 'white'}}>Upcoming Events</h2>
-          <div className="row">
-            {events && events.map(event => (
-              <div className="col-md-4 my-5" key={event._id}>
-                <Event event={event} />
+            <h2 className="page-heading">Upcoming Events</h2>
+            {events && events.length > 0 ? (
+              <div className="row events-row">
+                {events.map(event => (
+                  <div className="col-md-4 col-lg-4 mb-4" key={event._id}>
+                    <Event event={event} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="empty-state">
+                <p>No upcoming events yet.</p>
+                <p className="empty-state-sub">Be the first to create one!</p>
+              </div>
+            )}
           </>
         )}
       </div>

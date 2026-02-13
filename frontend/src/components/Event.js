@@ -3,7 +3,6 @@ import { EventContext } from '../context/EventContext';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
-
 import API_BASE_URL from '../config';
 
 const Event = ({ event }) => {
@@ -169,16 +168,16 @@ const Event = ({ event }) => {
                 </div>
             </div>
             <div className="event-footer">
-                <div>
-                    <button type="button" className="btn btn-link showAttendees" onClick={toggleAttendees}>
-                        Show Attendees
-                    </button>
-                </div>
-                <div>
-                    <button type="button" className="btn btn-dark mt-2" onClick={isAttending ? handleUnattend : handleAttend}>
-                        {isAttending ? 'Unattend' : 'Attend'}
-                    </button>
-                </div>
+                <button type="button" className="btn btn-link showAttendees" onClick={toggleAttendees}>
+                    Show Attendees
+                </button>
+                <button
+                    type="button"
+                    className={isAttending ? "btn-unattend" : "btn-attend"}
+                    onClick={isAttending ? handleUnattend : handleAttend}
+                >
+                    {isAttending ? 'Unattend' : 'Attend'}
+                </button>
             </div>
             {showEditModal && (
                 <EditEventModal 
