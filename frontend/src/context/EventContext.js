@@ -62,7 +62,7 @@ const EventState = ({ children }) => {
         }
     }
 
-    // Get event by ID
+    // Get event by ID - returns the event or null
     const getEventById = async (id) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/event/getallevents/${id}`, {
@@ -74,8 +74,10 @@ const EventState = ({ children }) => {
 
             const resp = await response.json();
             setEvent(resp);
+            return response.ok ? resp : null;
         } catch (error) {
             console.error("Error fetching event by ID:", error);
+            return null;
         }
     }
 

@@ -158,7 +158,9 @@ const Event = ({ event }) => {
                 )}
             </div>
             <div className="event-details">
-                <div className="event-title">{event.title}</div>
+                <Link to={`/event/${event._id}`} className="event-title-link">
+                    <div className="event-title">{event.title}</div>
+                </Link>
                 <div className="event-info">
                     {new Date(event.startdatetime).toLocaleString()} - {new Date(event.enddatetime).toLocaleString()}<br />
                     {event.location}
@@ -215,6 +217,10 @@ const EditEventModal = ({ event, onClose, onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (new Date(editedEvent.enddatetime) <= new Date(editedEvent.startdatetime)) {
+            toast.error("End date and time must be after start date and time");
+            return;
+        }
         onSubmit(editedEvent);
     };
 

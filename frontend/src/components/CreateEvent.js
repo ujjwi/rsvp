@@ -24,6 +24,11 @@ const CreateEvent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (event.startdatetime && event.enddatetime && new Date(event.enddatetime) <= new Date(event.startdatetime)) {
+            toast.error("End date and time must be after start date and time");
+            return;
+        }
+
         try {
             await addEvent(event);
             toast.success("Event created successfully!");

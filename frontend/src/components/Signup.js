@@ -12,7 +12,12 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, email, password } = credentials;
+        const { name, email, password, cpassword } = credentials;
+
+        if (password !== cpassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
 
         const formData = new FormData();
         formData.append('name', name);
