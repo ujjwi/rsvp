@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { EventContext } from '../context/EventContext';
 import Event from './Event';
+import { EventDetailSkeleton } from './Skeleton';
 import { toast } from 'react-toastify';
 
 function EventDetail() {
@@ -27,13 +28,7 @@ function EventDetail() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="page-wrapper">
-        <div className="container text-center">
-          <div className="spinner-border text-light spinner-home" role="status" aria-hidden="true" />
-        </div>
-      </div>
-    );
+    return <EventDetailSkeleton />;
   }
 
   if (!eventData) {

@@ -8,7 +8,7 @@ function Navbar() {
   let location = useLocation();
   // let navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, userId, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
@@ -48,10 +48,10 @@ function Navbar() {
   );
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchCurrentUser(localStorage.getItem("userId"));
+    if (isLoggedIn && userId) {
+      fetchCurrentUser(userId);
     }
-  }, [isLoggedIn, fetchCurrentUser]);
+  }, [isLoggedIn, userId, fetchCurrentUser]);
 
   return (
     <div>
@@ -163,7 +163,7 @@ function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        to={`/profile/${localStorage.getItem("userId")}`}
+                        to={`/profile/${userId}`}
                       >
                         <img className="dropdown-icon" src="/images/user.png" alt="user-profile" />
                         View profile

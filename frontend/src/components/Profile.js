@@ -1,26 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
 import Event from "./Event";
 import { EventContext } from "../context/EventContext";
+import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import bcrypt from 'bcryptjs';
 import API_BASE_URL from "../config";
+import { ProfileSkeleton } from "./Skeleton";
 
 function Profile() {
   const { id } = useParams();
-  const { events, getAllEvents } = useContext(EventContext);
+  const { userId } = useContext(AuthContext);
+  const { getAllEvents } = useContext(EventContext);
 
   const [user, setUser] = useState({});
   const [eventsAttending, setEventsAttending] = useState([]);
   const [eventsHosting, setEventsHosting] = useState([]);
-  const [activeTab, setActiveTab] = useState("attending"); // State for active tab
+  const [activeTab, setActiveTab] = useState("attending");
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState(null);
 
-  const isCurrentUser = localStorage.getItem("userId") === id;
+  const isCurrentUser = userId && String(userId) === String(id);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -205,10 +208,7 @@ function Profile() {
         </div>
         <div className="events-container">
           {loading ? (
-            <div
-              className="spinner-border text-light spinner-home"
-              role="status"
-            ></div>
+            <ProfileSkeleton />
           ) : (
             <>
               {activeTab === "attending" ? (

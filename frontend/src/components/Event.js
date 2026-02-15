@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 import API_BASE_URL from '../config';
+import { EventCardSkeleton } from './Skeleton';
 
 const Event = ({ event }) => {
     const [creator, setCreator] = useState(null);
@@ -14,7 +15,7 @@ const Event = ({ event }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAttendees, setShowAttendees] = useState(false);
 
-    const { isLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, userId } = useContext(AuthContext);
     
     const toggleAttendees = () => {
         setShowAttendees(!showAttendees);
@@ -122,9 +123,9 @@ const Event = ({ event }) => {
         }
     };
 
-    if (!event || !creator) return <div>Loading...</div>;
+    if (!event || !creator) return <EventCardSkeleton />;
 
-    const isHost = localStorage.getItem('userId') && localStorage.getItem('userId') === event.createdBy;
+    const isHost = userId && String(userId) === String(event.createdBy);
 
     return (
         <div className="event-container gradient-background">

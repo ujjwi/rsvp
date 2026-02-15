@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { EventContext } from '../context/EventContext';
 import { AuthContext } from '../context/AuthContext';
 import Event from './Event';
+import { EventsGridSkeleton } from './Skeleton';
 
 function Home() {
   const { events, getAllEvents } = useContext(EventContext);
@@ -23,8 +24,10 @@ function Home() {
     <div className="page-wrapper">
       <div className="container">
         {loading ? (
-          <div className="spinner-border text-light spinner-home" role="status" aria-hidden="true">
-          </div>
+          <>
+            <h2 className="page-heading">Upcoming Events</h2>
+            <EventsGridSkeleton count={6} />
+          </>
         ) : (
           <>
             <h2 className="page-heading">Upcoming Events</h2>
