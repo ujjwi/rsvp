@@ -8,6 +8,7 @@ function Signup() {
     const { login } = useContext(AuthContext);
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
     const [displayPicture, setDisplayPicture] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -19,27 +20,33 @@ function Signup() {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('password', password);
-        if (displayPicture) {
-            formData.append('displayPicture', displayPicture);
-        }
+        setSubmitting(true);
+        try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('password', password);
+            if (displayPicture) {
+                formData.append('displayPicture', displayPicture);
+            }
 
-        const response = await fetch(`${API_BASE_URL}/api/auth/createuser`, {
-            method: "POST",
-            body: formData,
-        });
+            const response = await fetch(`${API_BASE_URL}/api/auth/createuser`, {
+                method: "POST",
+                body: formData,
+            });
 
-        const resp = await response.json();
+            const resp = await response.json();
 
-        if (resp.success) {
-            login({ token: resp.authToken, userId: resp.userId });
-            navigate("/");
-            toast.success("Account created successfully.");
-        } else {
-            toast.error("Unable to Sign Up! Try again.");
+            if (resp.success) {
+                login({ token: resp.authToken, userId: resp.userId });
+                navigate("/");
+                toast.success("Account created successfully.");
+            } else {
+                const msg = resp.error || (Array.isArray(resp.errors) && resp.errors[0]?.msg) || "Unable to Sign Up! Try again.";
+                toast.error(msg);
+            }
+        } finally {
+            setSubmitting(false);
         }
     }
 
@@ -114,7 +121,9 @@ function Signup() {
                             </div> */}
 
                             <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                <button  type="submit" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary btn-lg">Register</button>
+                                <button type="submit" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary btn-lg" disabled={submitting}>
+                                    {submitting ? "Creating account..." : "Register"}
+                                </button>
                             </div>
 
                             </form>

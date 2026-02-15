@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 const CreateEvent = () => {
     const navigate = useNavigate();
     const { addEvent } = useContext(EventContext);
+    const [submitting, setSubmitting] = useState(false);
     const [event, setEvent] = useState({
         title: '',
         description: '',
@@ -29,6 +30,7 @@ const CreateEvent = () => {
             return;
         }
 
+        setSubmitting(true);
         try {
             await addEvent(event);
             toast.success("Event created successfully!");
@@ -37,6 +39,7 @@ const CreateEvent = () => {
             toast.error("Failed to create event. Please try again.");
             console.error("Error creating event:", error);
         }
+        setSubmitting(false);
     };
 
     return (
@@ -98,7 +101,9 @@ const CreateEvent = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3 btn-create">Create Event</button>
+                <button type="submit" className="btn btn-primary mt-3 btn-create" disabled={submitting}>
+                {submitting ? "Creating..." : "Create Event"}
+            </button>
             </form>
         </div>
         </div>

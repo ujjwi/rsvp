@@ -98,6 +98,7 @@ const Event = ({ event }) => {
                 await attendEvent(event._id);
                 getAllEvents();
                 getEventsAttending();
+                toast.success("You're attending this event!");
             } catch (error) {
                 console.error("Error attending event:", error);
             }
@@ -112,6 +113,7 @@ const Event = ({ event }) => {
                 await unattendEvent(event._id);
                 getAllEvents();
                 getEventsAttending();
+                toast.success("You're no longer attending.");
             } catch (error) {
                 console.error("Error attending event:", error);
             }

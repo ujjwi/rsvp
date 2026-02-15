@@ -7,29 +7,34 @@ import { AuthContext } from "../context/AuthContext";
 function Login() {
   const { login } = useContext(AuthContext);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-      }),
-    });
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
 
-    const resp = await response.json();
+      const resp = await response.json();
 
-    if (resp.success) {
-      login({ token: resp.authToken, userId: resp.userId });
-      navigate("/");
-      toast.success("Logged in successfully! Welcome back.");
-    } else {
-      toast.error("Invalid credentials! Try again.");
+      if (resp.success) {
+        login({ token: resp.authToken, userId: resp.userId });
+        navigate("/");
+        toast.success("Logged in successfully! Welcome back.");
+      } else {
+        const msg = (typeof resp.errors === 'string' ? resp.errors : resp.errors?.[0]?.msg) || "Invalid credentials! Try again.";
+        toast.error(msg);
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -108,8 +113,9 @@ function Login() {
                             data-mdb-button-init
                             data-mdb-ripple-init
                             className="btn btn-primary btn-lg"
+                            disabled={submitting}
                           >
-                            Login
+                            {submitting ? "Logging in..." : "Login"}
                           </button>
                         </div>
                       </form>
