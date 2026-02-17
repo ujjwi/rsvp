@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 import API_BASE_URL from "../config";
 import { AuthContext } from "../context/AuthContext";
@@ -9,6 +9,8 @@ function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ function Login() {
 
       if (resp.success) {
         login({ token: resp.authToken, userId: resp.userId });
-        navigate("/");
+        navigate(from, { replace: true });
         toast.success("Logged in successfully! Welcome back.");
       } else {
         const msg = (typeof resp.errors === 'string' ? resp.errors : resp.errors?.[0]?.msg) || "Invalid credentials! Try again.";

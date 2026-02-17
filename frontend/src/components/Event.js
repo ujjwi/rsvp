@@ -14,6 +14,7 @@ const Event = ({ event }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAttendees, setShowAttendees] = useState(false);
+    const [attendLoading, setAttendLoading] = useState(false);
 
     const { isLoggedIn, userId } = useContext(AuthContext);
     
@@ -41,7 +42,7 @@ const Event = ({ event }) => {
             setShowDeleteModal(false);
             toast.success("Event deleted successfully!");
         } catch (error) {
-            toast.error("Failed to delete event. Please try again.");
+            // Error toast shown by EventContext
         }
     };
 
@@ -52,7 +53,7 @@ const Event = ({ event }) => {
             setShowEditModal(false);
             toast.success("Event updated successfully!");
         } catch (error) {
-            toast.error("Failed to update event. Please try again.");
+            // Error toast shown by EventContext
         }
     };
 
@@ -95,13 +96,16 @@ const Event = ({ event }) => {
 
     const handleAttend = async () => {
         if (isLoggedIn) {
+            setAttendLoading(true);
             try {
                 await attendEvent(event._id);
                 getAllEvents();
                 getEventsAttending();
                 toast.success("You're attending this event!");
             } catch (error) {
-                console.error("Error attending event:", error);
+                // Error toast handled in EventContext
+            } finally {
+                setAttendLoading(false);
             }
         } else {
             toast.error("You must be logged in to attend an event.");
@@ -110,13 +114,16 @@ const Event = ({ event }) => {
 
     const handleUnattend = async () => {
         if (isLoggedIn) {
+            setAttendLoading(true);
             try {
                 await unattendEvent(event._id);
                 getAllEvents();
                 getEventsAttending();
                 toast.success("You're no longer attending.");
             } catch (error) {
-                console.error("Error attending event:", error);
+                // Error toast handled in EventContext
+            } finally {
+                setAttendLoading(false);
             }
         } else {
             toast.error("You must be logged in to unattend an event.");
@@ -180,8 +187,9 @@ const Event = ({ event }) => {
                     type="button"
                     className={isAttending ? "btn-unattend" : "btn-attend"}
                     onClick={isAttending ? handleUnattend : handleAttend}
+                    disabled={attendLoading}
                 >
-                    {isAttending ? 'Unattend' : 'Attend'}
+                    {attendLoading ? '...' : (isAttending ? 'Unattend' : 'Attend')}
                 </button>
             </div>
             {showEditModal && (

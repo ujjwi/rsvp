@@ -20,6 +20,7 @@ import Event from './components/Event';
 import EventDetail from './components/EventDetail';
 import CreateEvent from './components/CreateEvent';
 import ProtectedRoute from './components/ProtectedRoute';
+import AuthErrorHandler from './components/AuthErrorHandler';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <AuthProvider>
         <EventState>
           <Router>
+            <AuthErrorHandler />
             <Navbar />
 
             {/* Using "exact path" instead of "path" becuase react does partial checking */}

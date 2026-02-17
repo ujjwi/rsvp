@@ -4,13 +4,13 @@ import { EventContext } from "../context/EventContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
-import bcrypt from 'bcryptjs';
 import API_BASE_URL from "../config";
+import { apiFetch } from "../utils/api";
 import { ProfileSkeleton } from "./Skeleton";
 
 function Profile() {
   const { id } = useParams();
-  const { userId } = useContext(AuthContext);
+  const { userId, logout } = useContext(AuthContext);
   const { getAllEvents } = useContext(EventContext);
 
   const [user, setUser] = useState({});
@@ -21,7 +21,6 @@ function Profile() {
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [password, setPassword] = useState(null);
 
   const isCurrentUser = userId && String(userId) === String(id);
 
@@ -31,7 +30,6 @@ function Profile() {
         const response = await fetch(`${API_BASE_URL}/api/auth/getuser/${id}`);
         const data = await response.json();
         setUser(data);
-        setPassword(data.password);
 
         // Fetch events attending and hosting
         const attendingResponse = await fetch(
@@ -72,16 +70,13 @@ function Profile() {
   };
 
   const confirmDelete = async (enteredPassword) => {
+    if (!enteredPassword) {
+      toast.error("Enter your password");
+      return;
+    }
+
     try {
-      const isMatch = await bcrypt.compare(enteredPassword, password);
-      if (!enteredPassword || !isMatch) {
-        console.log(enteredPassword);
-        console.log(password);
-        toast.error("Enter your password");
-        return;
-      }
-  
-      const response = await fetch(`${API_BASE_URL}/api/auth/deleteuser`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/auth/deleteuser`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -89,24 +84,18 @@ function Profile() {
         },
         body: JSON.stringify({ password: enteredPassword }),
       });
-  
+
       const data = await response.json();
       if (data.success) {
-        // Remove items from localStorage before redirecting
-        await new Promise((resolve) => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("userId");
-          resolve();
-        });
-  
-        // Redirect after clearing localStorage
+        logout();
         window.location.href = "/";
         toast.success("Account deleted successfully");
       } else {
-        console.error("Error deleting account:", data.error);
+        toast.error(data.error || "Failed to delete account");
       }
     } catch (error) {
       console.error("Error deleting account:", error);
+      toast.error("Failed to delete account. Please try again.");
     }
   };
   
@@ -124,7 +113,7 @@ function Profile() {
         formData.append("displayPicture", updatedUser.displayPicture);
       }
   
-      const response = await fetch(`${API_BASE_URL}/api/auth/updateuser`, {
+      const response = await apiFetch(`${API_BASE_URL}/api/auth/updateuser`, {
         method: "PUT",
         headers: {
           "auth-token": localStorage.getItem('token')
@@ -137,11 +126,13 @@ function Profile() {
       if (data.success) {
         setUser(data.user);
         setShowEditModal(false);
+        toast.success("Profile updated successfully!");
       } else {
-        console.error("Error updating profile:", data.error);
+        toast.error(data.error || "Failed to update profile.");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
