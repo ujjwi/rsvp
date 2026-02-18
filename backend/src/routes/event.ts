@@ -167,9 +167,9 @@ router.put(
       }
 
       let event = await Event.findById(req.params.id);
-      if (!event) return res.status(404).send('Event not found');
+      if (!event) return res.status(404).json({ msg: 'Event not found' });
       if (event.createdBy.toString() !== req.user!._id.toString()) {
-        return res.status(401).send('Unauthorized action');
+        return res.status(401).json({ error: 'Unauthorized action' });
       }
 
       const updates: Record<string, unknown> = {};
@@ -194,9 +194,9 @@ router.delete('/deleteevent/:id', fetchUser, async (req: Request, res: Response)
       return res.status(400).json({ msg: 'Invalid event ID' });
     }
     const event = await Event.findById(req.params.id);
-    if (!event) return res.status(404).send('Event not found');
+    if (!event) return res.status(404).json({ msg: 'Event not found' });
     if (event.createdBy.toString() !== req.user!._id.toString()) {
-      return res.status(401).send('Unauthorized action');
+      return res.status(401).json({ error: 'Unauthorized action' });
     }
 
     await Event.findByIdAndDelete(req.params.id);

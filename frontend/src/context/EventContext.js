@@ -103,7 +103,7 @@ const EventState = ({ children }) => {
                 toast.error(msg);
                 throw new Error(msg);
             }
-            setHostingEvents([...hostingEvents, resp]);
+            setHostingEvents(prev => [...prev, resp]);
             getAllEvents();
         } catch (error) {
             if (!error.message?.startsWith("Failed")) {
@@ -133,8 +133,8 @@ const EventState = ({ children }) => {
                 toast.error(msg);
                 throw new Error(msg);
             }
-            setEvents(events.map(ev => ev._id === id ? resp.event ?? resp : ev));
-            setHostingEvents(hostingEvents.map(ev => ev._id === id ? resp.event ?? resp : ev));
+            setEvents(prev => prev.map(ev => ev._id === id ? resp.event ?? resp : ev));
+            setHostingEvents(prev => prev.map(ev => ev._id === id ? resp.event ?? resp : ev));
             setEvent(resp.event ?? resp);
         } catch (error) {
             console.error("Error updating event:", error);
@@ -160,8 +160,8 @@ const EventState = ({ children }) => {
                 toast.error(msg);
                 throw new Error(msg);
             }
-            setEvents(events.filter(ev => ev._id !== id));
-            setHostingEvents(hostingEvents.filter(ev => ev._id !== id));
+            setEvents(prev => prev.filter(ev => ev._id !== id));
+            setHostingEvents(prev => prev.filter(ev => ev._id !== id));
         } catch (error) {
             console.error("Error deleting event:", error);
             toast.error("Failed to delete event. Please try again.");
@@ -186,7 +186,7 @@ const EventState = ({ children }) => {
                 toast.error(msg);
                 throw new Error(msg);
             }
-            setAttendingEvents([...attendingEvents, resp.event]);
+            setAttendingEvents(prev => [...prev, resp.event]);
         } catch (error) {
             if (!error.message?.startsWith("Failed")) {
                 console.error("Error attending event:", error);
@@ -213,7 +213,7 @@ const EventState = ({ children }) => {
                 toast.error(msg);
                 throw new Error(msg);
             }
-            setAttendingEvents(attendingEvents.filter(ev => ev._id !== id));
+            setAttendingEvents(prev => prev.filter(ev => ev._id !== id));
         } catch (error) {
             if (!error.message?.startsWith("Failed")) {
                 console.error("Error unattending event:", error);

@@ -29,6 +29,11 @@ function Profile() {
       try {
         const response = await fetch(`${API_BASE_URL}/api/auth/getuser/${id}`);
         const data = await response.json();
+        if (!response.ok) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
         setUser(data);
 
         // Fetch events attending and hosting
@@ -137,12 +142,22 @@ function Profile() {
   };
 
 
+  if (!loading && !user) {
+    return (
+      <div className="page-wrapper">
+        <div className="container text-center">
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}>User not found.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-wrapper">
       <div className="container">
         <div className="profile-card-container">
           <div className="profile-card">
-            {user.displayPicture && (
+            {user?.displayPicture && (
               <img
                 src={user.displayPicture}
                 alt="Profile"
@@ -150,7 +165,7 @@ function Profile() {
               />
             )}
             <div className="profile-header">
-              <h2>{user.name}</h2>
+              <h2>{user?.name}</h2>
               {isCurrentUser && (
                 <div className="dropdown">
                   <svg

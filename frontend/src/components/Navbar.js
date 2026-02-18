@@ -145,7 +145,7 @@ function Navbar() {
                       />
                       <div className="dropdown-user-info">
                         <strong>{currentUser?.name || "User"}</strong>
-                        <span>{currentUser?.email || "user1@example.com"}</span>
+                        <span>{currentUser?.email || "—"}</span>
                       </div>
                     </li>
                     <li>
@@ -163,7 +163,7 @@ function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        to={`/profile/${userId}`}
+                        to={userId ? `/profile/${userId}` : '#'}
                       >
                         <img className="dropdown-icon" src="/images/user.png" alt="user-profile" />
                         View profile

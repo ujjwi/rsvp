@@ -88,12 +88,12 @@ router.post(
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ success, errors: 'Try logging in with correct credentials' });
+        return res.status(400).json({ success, errors: [{ msg: 'Try logging in with correct credentials' }] });
       }
 
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ success, errors: 'Try logging in with correct credentials' });
+        return res.status(400).json({ success, errors: [{ msg: 'Try logging in with correct credentials' }] });
       }
 
       const data = { user: { _id: user._id } };
@@ -110,7 +110,10 @@ router.post(
 router.get('/getuser/:id', async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
-    res.send(user);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
   } catch (error) {
     console.error((error as Error).message);
     res.status(500).send('Server error!');

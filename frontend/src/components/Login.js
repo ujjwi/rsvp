@@ -32,7 +32,7 @@ function Login() {
         navigate(from, { replace: true });
         toast.success("Logged in successfully! Welcome back.");
       } else {
-        const msg = (typeof resp.errors === 'string' ? resp.errors : resp.errors?.[0]?.msg) || "Invalid credentials! Try again.";
+        const msg = (Array.isArray(resp.errors) ? resp.errors[0]?.msg : resp.errors) || "Invalid credentials! Try again.";
         toast.error(msg);
       }
     } finally {
