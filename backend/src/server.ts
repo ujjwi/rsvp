@@ -4,9 +4,9 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import connectToMongo from './config/db';
-import authRoutes from './routes/auth';
-import eventRoutes from './routes/event';
+import connectToMongo from './config/db.js';
+import authRoutes from './routes/auth.js';
+import eventRoutes from './routes/event.js';
 
 connectToMongo();
 

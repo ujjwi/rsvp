@@ -31,7 +31,6 @@ function Profile() {
         const data = await response.json();
         if (!response.ok) {
           setUser(null);
-          setLoading(false);
           return;
         }
         setUser(data);
@@ -40,20 +39,23 @@ function Profile() {
         const attendingResponse = await fetch(
           `${API_BASE_URL}/api/event/eventsvisiting/${id}`
         );
-        const attendingData = await attendingResponse.json();
-        setEventsAttending(attendingData);
+        const attendingData = attendingResponse.ok ? await attendingResponse.json() : [];
+        setEventsAttending(Array.isArray(attendingData) ? attendingData : []);
 
         const hostingResponse = await fetch(
           `${API_BASE_URL}/api/event/eventshosting/${id}`
         );
-        const hostingData = await hostingResponse.json();
-        setEventsHosting(hostingData);
+        const hostingData = hostingResponse.ok ? await hostingResponse.json() : [];
+        setEventsHosting(Array.isArray(hostingData) ? hostingData : []);
 
         // Fetch all events (similar to Home)
         await getAllEvents();
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setEventsAttending([]);
+        setEventsHosting([]);
+      } finally {
+        setLoading(false);
       }
     };
 

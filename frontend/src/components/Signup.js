@@ -45,6 +45,8 @@ function Signup() {
                 const msg = resp.error || (Array.isArray(resp.errors) && resp.errors[0]?.msg) || "Unable to Sign Up! Try again.";
                 toast.error(msg);
             }
+        } catch (error) {
+            toast.error("Something went wrong. Please try again.");
         } finally {
             setSubmitting(false);
         }

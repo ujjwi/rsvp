@@ -36,7 +36,10 @@ const CreateEvent = () => {
             toast.success("Event created successfully!");
             navigate("/");
         } catch (error) {
-            toast.error("Failed to create event. Please try again.");
+            // EventContext shows toasts for validation/API errors; only show for network failures
+            if (error?.message === "Failed to fetch") {
+                toast.error("Failed to create event. Please try again.");
+            }
             console.error("Error creating event:", error);
         }
         setSubmitting(false);

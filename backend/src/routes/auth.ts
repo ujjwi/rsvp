@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
-import User from '../models/User';
-import Event from '../models/Event';
+import User from '../models/User.js';
+import Event from '../models/Event.js';
 import { body, validationResult } from 'express-validator';
 import multer from 'multer';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fetchUser from '../middlewares/fetchUser';
-import { cloudinary, storage } from '../config/cloudinary';
+import fetchUser from '../middlewares/fetchUser.js';
+import { cloudinary, storage } from '../config/cloudinary.js';
 
 const router = Router();
 const jwt_secret = process.env.secret_key!;
@@ -66,7 +66,7 @@ router.post(
       res.json({ success, authToken, userId: user._id });
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );
@@ -102,7 +102,7 @@ router.post(
       res.json({ success, authToken, userId: user._id });
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );
@@ -116,7 +116,7 @@ router.get('/getuser/:id', async (req: Request, res: Response) => {
     res.json(user);
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -170,7 +170,7 @@ router.put(
       res.json({ success, user });
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );
@@ -213,7 +213,7 @@ router.delete(
       res.json({ success, message: 'Account deleted successfully' });
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );

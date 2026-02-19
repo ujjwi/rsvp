@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import Event from '../models/Event';
-import User from '../models/User';
-import fetchUser from '../middlewares/fetchUser';
+import Event from '../models/Event.js';
+import User from '../models/User.js';
+import fetchUser from '../middlewares/fetchUser.js';
 import { body, validationResult } from 'express-validator';
 import mongoose from 'mongoose';
 
@@ -14,7 +14,7 @@ router.get('/eventsvisiting', fetchUser, async (req: Request, res: Response) => 
     res.json(user.eventsAttending);
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -25,7 +25,7 @@ router.get('/eventshosting', fetchUser, async (req: Request, res: Response) => {
     res.json(user.eventsHosting);
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -54,7 +54,7 @@ router.get('/getallevents', async (_req: Request, res: Response) => {
     res.json(allEvents);
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -68,7 +68,7 @@ router.get('/getallevents/:id', async (req: Request, res: Response) => {
     res.json(event);
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -112,7 +112,7 @@ router.post(
       res.json(savedEvent);
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );
@@ -142,7 +142,7 @@ router.post('/attendevent/:id', fetchUser, async (req: Request, res: Response) =
     res.json({ event: updatedEvent ?? event, user: updatedUser ?? user });
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -183,7 +183,7 @@ router.put(
       res.json({ event });
     } catch (error) {
       console.error((error as Error).message);
-      res.status(500).send('Server error!');
+      res.status(500).json({ error: 'Server error!' });
     }
   }
 );
@@ -206,7 +206,7 @@ router.delete('/deleteevent/:id', fetchUser, async (req: Request, res: Response)
     res.json({ success: 'Event deleted', event });
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 
@@ -235,7 +235,7 @@ router.delete('/unattendevent/:id', fetchUser, async (req: Request, res: Respons
     res.json({ event: updatedEvent ?? event, user: updatedUser ?? user });
   } catch (error) {
     console.error((error as Error).message);
-    res.status(500).send('Server error!');
+    res.status(500).json({ error: 'Server error!' });
   }
 });
 

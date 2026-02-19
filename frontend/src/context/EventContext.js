@@ -23,9 +23,10 @@ const EventState = ({ children }) => {
             });
 
             const resp = await response.json();
-            setEvents(resp);
+            setEvents(response.ok && Array.isArray(resp) ? resp : []);
         } catch (error) {
             console.error("Error fetching all events:", error);
+            setEvents([]);
         }
     }
 
@@ -40,10 +41,11 @@ const EventState = ({ children }) => {
             });
 
             const resp = await response.json();
-            setAttendingEvents(resp);
+            setAttendingEvents(response.ok && Array.isArray(resp) ? resp : []);
         } catch (error) {
             console.error("Error fetching events attending:", error);
             toast.error("Failed to load events.");
+            setAttendingEvents([]);
         }
     }
 
@@ -59,10 +61,11 @@ const EventState = ({ children }) => {
             });
 
             const resp = await response.json();
-            setHostingEvents(resp);
+            setHostingEvents(response.ok && Array.isArray(resp) ? resp : []);
         } catch (error) {
             console.error("Error fetching events hosting:", error);
             toast.error("Failed to load events.");
+            setHostingEvents([]);
         }
     }
 
