@@ -377,6 +377,51 @@
   color: #1a202c;
 }
 
+/* Inline panels - appear below event, not as overlay */
+.event-inline-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.event-inline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.event-inline-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.event-inline-panel .close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.event-inline-panel .form-group label {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.event-inline-panel .form-control {
+  color: #333;
+  border-color: #ced4da;
+  background: #fff;
+}
+
+.attendees-inline .attendee-item {
+  padding: 6px 0;
+}
+
 .user-display-picture {
   border-radius: 50%;
   width: 50px;

@@ -181,7 +181,7 @@ const Event = ({ event }) => {
             </div>
             <div className="event-footer">
                 <button type="button" className="btn btn-link showAttendees" onClick={toggleAttendees}>
-                    Show Attendees
+                    {showAttendees ? 'Hide Attendees' : 'Show Attendees'}
                 </button>
                 <button
                     type="button"
@@ -192,31 +192,30 @@ const Event = ({ event }) => {
                     {attendLoading ? '...' : (isAttending ? 'Unattend' : 'Attend')}
                 </button>
             </div>
+            {showAttendees && (
+                <AttendeesInline
+                    attendeeIds={event.attendees}
+                    host={API_BASE_URL}
+                />
+            )}
             {showEditModal && (
-                <EditEventModal 
-                    event={event} 
+                <EditEventInline
+                    event={event}
                     onClose={() => setShowEditModal(false)}
                     onSubmit={handleEditSubmit}
                 />
             )}
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <DeleteConfirmationInline
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={confirmDelete}
-                />
-            )}
-            {showAttendees && (
-                <AttendeesModal 
-                    attendeeIds={event.attendees}
-                    host={API_BASE_URL}
-                    onClose={() => setShowAttendees(false)}
                 />
             )}
         </div>
     );
 };
 
-const EditEventModal = ({ event, onClose, onSubmit }) => {
+const EditEventInline = ({ event, onClose, onSubmit }) => {
     const [editedEvent, setEditedEvent] = useState(event);
 
     const handleChange = (e) => {
@@ -236,98 +235,87 @@ const EditEventModal = ({ event, onClose, onSubmit }) => {
     };
 
     return (
-        <div className="modal" style={{ display: 'block' }}>
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Edit Event</h5>
-                        <button type="button" className="close" onClick={onClose}>
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Title</label>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    name="title" 
-                                    value={editedEvent.title} 
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Description</label>
-                                <textarea 
-                                    className="form-control" 
-                                    name="description" 
-                                    value={editedEvent.description} 
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Start Date and Time</label>
-                                <input 
-                                    type="datetime-local" 
-                                    className="form-control" 
-                                    name="startdatetime" 
-                                    value={new Date(editedEvent.startdatetime).toISOString().slice(0, 16)} 
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>End Date and Time</label>
-                                <input 
-                                    type="datetime-local" 
-                                    className="form-control" 
-                                    name="enddatetime" 
-                                    value={new Date(editedEvent.enddatetime).toISOString().slice(0, 16)} 
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Location</label>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    name="location" 
-                                    value={editedEvent.location} 
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <button type="submit" className="btn btn-primary mt-3">Save changes</button>
-                        </form>
-                    </div>
-                </div>
+        <div className="event-inline-panel">
+            <div className="event-inline-header">
+                <h5 className="event-inline-title">Edit Event</h5>
+                <button type="button" className="close" onClick={onClose} aria-label="Close">
+                    <span>&times;</span>
+                </button>
             </div>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>Title</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        name="title"
+                        value={editedEvent.title}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                        className="form-control"
+                        name="description"
+                        value={editedEvent.description}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Start Date and Time</label>
+                    <input
+                        type="datetime-local"
+                        className="form-control"
+                        name="startdatetime"
+                        value={new Date(editedEvent.startdatetime).toISOString().slice(0, 16)}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>End Date and Time</label>
+                    <input
+                        type="datetime-local"
+                        className="form-control"
+                        name="enddatetime"
+                        value={new Date(editedEvent.enddatetime).toISOString().slice(0, 16)}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Location</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        name="location"
+                        value={editedEvent.location}
+                        onChange={handleChange}
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary mt-3">Save changes</button>
+                <button type="button" className="btn btn-secondary mt-2 ms-2" onClick={onClose}>Cancel</button>
+            </form>
         </div>
     );
 };
 
-const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
-    <div className="modal" style={{ display: 'block' }}>
-        <div className="modal-dialog">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title">Confirm Deletion</h5>
-                    <button type="button" className="close" onClick={onClose}>
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div className="modal-body">
-                    <p>Are you sure you want to delete this event?</p>
-                </div>
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                    <button type="button" className="btn btn-danger" onClick={onConfirm}>Delete</button>
-                </div>
-            </div>
+const DeleteConfirmationInline = ({ onClose, onConfirm }) => (
+    <div className="event-inline-panel">
+        <div className="event-inline-header">
+            <h5 className="event-inline-title">Confirm Deletion</h5>
+            <button type="button" className="close" onClick={onClose} aria-label="Close">
+                <span>&times;</span>
+            </button>
+        </div>
+        <p style={{ marginBottom: 12 }}>Are you sure you want to delete this event?</p>
+        <div>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="button" className="btn btn-danger ms-2" onClick={onConfirm}>Delete</button>
         </div>
     </div>
 );
 
-const AttendeesModal = ({ attendeeIds, host, onClose }) => {
+const AttendeesInline = ({ attendeeIds, host }) => {
     const [attendees, setAttendees] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -356,33 +344,24 @@ const AttendeesModal = ({ attendeeIds, host, onClose }) => {
     }, [attendeeIds, host]);
 
     return (
-        <div className="modal" style={{ display: 'block' }}>
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Attendees</h5>
-                        <button type="button" className="close" onClick={onClose}>
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        {loading ? (
-                            <div>Loading...</div>
-                        ) : attendees.length === 0 ? (
-                            <div>No attendees yet</div>
-                        ) : (
-                            attendees.map(attendee => (
-                                <div key={attendee._id} className="attendee-item mb-3">
-                                    <Link to={`/profile/${attendee._id}`}>
-                                        <img src={attendee.displayPicture} alt={attendee.name} className="attendee-avatar" />
-                                        <span className='attendee-name'>{attendee.name}</span>
-                                    </Link>
-                                </div>
-                            ))
-                        )}
-                    </div>
+        <div className="event-inline-panel attendees-inline">
+            <h5 className="event-inline-title">Attendees</h5>
+            {loading ? (
+                <div>Loading...</div>
+            ) : attendees.length === 0 ? (
+                <div>No attendees yet</div>
+            ) : (
+                <div className="attendees-list">
+                    {attendees.map(attendee => (
+                        <div key={attendee._id} className="attendee-item mb-3">
+                            <Link to={`/profile/${attendee._id}`}>
+                                <img src={attendee.displayPicture} alt={attendee.name} className="attendee-avatar" />
+                                <span className="attendee-name">{attendee.name}</span>
+                            </Link>
+                        </div>
+                    ))}
                 </div>
-            </div>
+            )}
         </div>
     );
 };
