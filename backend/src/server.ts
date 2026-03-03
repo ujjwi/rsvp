@@ -18,7 +18,7 @@ const port = Number(process.env.PORT) || 5000;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['https://rsvp-respond.onrender.com', 'http://localhost:3000'];
+  : ['https://rsvp-respond.onrender.com', 'http://localhost:3000', 'https://rsvp-orcin-pi.vercel.app'];
 
 app.use(
   cors({
