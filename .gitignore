@@ -10,6 +10,7 @@ node_modules
 
 # production
 /build
+frontend/build
 
 # misc
 .DS_Store
@@ -25,3 +26,6 @@ yarn-error.log*
 
 #display pictures
 uploads.vscode
+
+backend/uploads
+implementation_plan.md
